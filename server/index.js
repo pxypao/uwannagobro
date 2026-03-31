@@ -19,6 +19,9 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
+  'https://uwannagobro.com',
+  'https://www.uwannagobro.com',
+  'https://uwannagobro.vercel.app',
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
