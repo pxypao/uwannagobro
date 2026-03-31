@@ -76,14 +76,37 @@ db.exec(`
   CREATE UNIQUE INDEX IF NOT EXISTS users_unique_phone ON users(phone);
 `);
 
-// Safe column migrations for claims (Fix 3 & 4) — ALTER TABLE fails silently if column exists
-for (const sql of [
+// Safe column migrations — ALTER TABLE is a no-op if the column already exists
+const migrations = [
+  // claims — Fix 3 & 4
   'ALTER TABLE claims ADD COLUMN transfer_confirmed INTEGER NOT NULL DEFAULT 0',
   'ALTER TABLE claims ADD COLUMN transfer_deadline   TEXT',
   'ALTER TABLE claims ADD COLUMN seeker_responded    INTEGER NOT NULL DEFAULT 0',
   'ALTER TABLE claims ADD COLUMN response_deadline   TEXT',
-]) {
-  try { db.exec(sql); } catch (_) {}
+
+  // users — profile fields
+  'ALTER TABLE users ADD COLUMN favorite_team          TEXT    NOT NULL DEFAULT ""',
+  'ALTER TABLE users ADD COLUMN sports_interests       TEXT    NOT NULL DEFAULT ""',
+  'ALTER TABLE users ADD COLUMN fan_since_year         INTEGER',
+  'ALTER TABLE users ADD COLUMN bio                    TEXT    NOT NULL DEFAULT ""',
+  'ALTER TABLE users ADD COLUMN seeker_fan_level       TEXT    NOT NULL DEFAULT ""',
+  'ALTER TABLE users ADD COLUMN seeker_age_range       TEXT    NOT NULL DEFAULT ""',
+
+  // users — STH verification
+  'ALTER TABLE users ADD COLUMN is_verified_sth          INTEGER NOT NULL DEFAULT 0',
+  'ALTER TABLE users ADD COLUMN sth_team                 TEXT',
+  'ALTER TABLE users ADD COLUMN sth_verification_submitted INTEGER NOT NULL DEFAULT 0',
+
+  // tickets — lister preferences
+  'ALTER TABLE tickets ADD COLUMN preferred_age_range TEXT NOT NULL DEFAULT "Any"',
+  'ALTER TABLE tickets ADD COLUMN fan_level           TEXT NOT NULL DEFAULT "Either"',
+  'ALTER TABLE tickets ADD COLUMN notes_to_seeker     TEXT NOT NULL DEFAULT ""',
+];
+
+let migrationsRun = 0;
+for (const sql of migrations) {
+  try { db.exec(sql); migrationsRun++; } catch (_) {}
 }
+console.log(`[db] Migrations attempted: ${migrations.length}, new columns added: ${migrationsRun}`);
 
 module.exports = db;
