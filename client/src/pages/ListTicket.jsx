@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from '../lib/api';
 
 const SPORTS    = ['Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
 const AGE_OPTS  = ['Any', '18-25', '26-35', '36-50', '50+'];
@@ -39,7 +40,7 @@ export default function ListTicket({ openAuth }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/tickets', {
+      const res = await fetch(`${API_BASE}/api/tickets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

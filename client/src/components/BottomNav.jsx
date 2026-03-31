@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from '../lib/api';
 
 export default function BottomNav() {
   const { user } = useAuth();
@@ -12,7 +13,7 @@ export default function BottomNav() {
 
     async function poll() {
       try {
-        const res = await fetch('/api/messages/unread/count', { credentials: 'include' });
+        const res = await fetch(`${API_BASE}/api/messages/unread/count`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
           if (active) setUnread(data.count);

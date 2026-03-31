@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import RatingModal from '../components/RatingModal';
 import STHBadge from '../components/STHBadge';
 import STHVerifyModal from '../components/STHVerifyModal';
+import { API_BASE } from '../lib/api';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -44,9 +45,9 @@ export default function MyTickets() {
     setFetching(true);
     try {
       const [lRes, cRes, rRes] = await Promise.all([
-        fetch('/api/my/tickets',          { credentials: 'include' }),
-        fetch('/api/my/claim',            { credentials: 'include' }),
-        fetch('/api/my/pending-ratings',  { credentials: 'include' }),
+        fetch(`${API_BASE}/api/my/tickets`,         { credentials: 'include' }),
+        fetch(`${API_BASE}/api/my/claim`,           { credentials: 'include' }),
+        fetch(`${API_BASE}/api/my/pending-ratings`, { credentials: 'include' }),
       ]);
       if (lRes.ok) {
         const d = await lRes.json();
@@ -72,7 +73,7 @@ export default function MyTickets() {
     if (!window.confirm('Remove this listing from the public feed?')) return;
     setCancelling(ticketId);
     try {
-      const res = await fetch(`/api/tickets/${ticketId}`, {
+      const res = await fetch(`${API_BASE}/api/tickets/${ticketId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -93,7 +94,7 @@ export default function MyTickets() {
     if (!window.confirm('Cancel this meet? The ticket will go back to the pool.')) return;
     setCancelling('meet');
     try {
-      const res = await fetch(`/api/claims/${claimId}/cancel`, {
+      const res = await fetch(`${API_BASE}/api/claims/${claimId}/cancel`, {
         method: 'POST',
         credentials: 'include',
       });

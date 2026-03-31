@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from '../lib/api';
 
 function calcAge(dob) {
   const birth = new Date(dob);
@@ -51,7 +52,7 @@ export default function AuthModal({ mode, onClose, switchMode }) {
 
     setLoading(true);
     try {
-      const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+      const endpoint = mode === 'signup' ? `${API_BASE}/api/auth/signup` : `${API_BASE}/api/auth/login`;
       const body = mode === 'signup' ? form : { email: form.email, password: form.password };
 
       const res = await fetch(endpoint, {

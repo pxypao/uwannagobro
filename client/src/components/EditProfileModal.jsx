@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE } from '../lib/api';
 
 const ALL_SPORTS    = ['Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
 const FAN_LEVELS    = ['', 'Casual', 'Die-Hard'];
@@ -23,7 +24,7 @@ export default function EditProfileModal({ onClose, onSaved }) {
 
   useEffect(() => {
     firstRef.current?.focus();
-    fetch('/api/profile', { credentials: 'include' })
+    fetch(`${API_BASE}/api/profile`, { credentials: 'include' })
       .then(r => r.json())
       .then(d => {
         if (d.profile) {
@@ -63,7 +64,7 @@ export default function EditProfileModal({ onClose, onSaved }) {
     setSaving(true);
     setError('');
     try {
-      const res = await fetch('/api/profile', {
+      const res = await fetch(`${API_BASE}/api/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

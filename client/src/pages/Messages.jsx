@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from '../lib/api';
 
 function initials(name) {
   if (!name) return '?';
@@ -63,7 +64,7 @@ export default function Messages() {
   const fetchClaim = useCallback(async () => {
     if (!user) return;
     try {
-      const seekerRes = await fetch('/api/my/claim', { credentials: 'include' });
+      const seekerRes = await fetch(`${API_BASE}/api/my/claim`, { credentials: 'include' });
       if (seekerRes.ok) {
         const data = await seekerRes.json();
         if (data.claim) {
@@ -76,7 +77,7 @@ export default function Messages() {
         }
       }
 
-      const myRes = await fetch('/api/my/tickets', { credentials: 'include' });
+      const myRes = await fetch(`${API_BASE}/api/my/tickets`, { credentials: 'include' });
       if (myRes.ok) {
         const data = await myRes.json();
         const claimed = data.tickets.find(t => t.status === 'claimed' && t.claim_id);
@@ -103,7 +104,7 @@ export default function Messages() {
   const fetchMessages = useCallback(async () => {
     if (!claimId) return;
     try {
-      const res = await fetch(`/api/messages/${claimId}`, { credentials: 'include' });
+      const res = await fetch(`${API_BASE}/api/messages/${claimId}`, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setMessages(data.messages);
@@ -120,7 +121,7 @@ export default function Messages() {
   const fetchTransferStatus = useCallback(async () => {
     if (!claimId) return;
     try {
-      const res = await fetch(`/api/claims/${claimId}/transfer-status`, { credentials: 'include' });
+      const res = await fetch(`${API_BASE}/api/claims/${claimId}/transfer-status`, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setTransferStatus(data);
@@ -156,7 +157,7 @@ export default function Messages() {
     if (!input.trim() || !claimId) return;
     setSending(true);
     try {
-      const res = await fetch(`/api/messages/${claimId}`, {
+      const res = await fetch(`${API_BASE}/api/messages/${claimId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -180,7 +181,7 @@ export default function Messages() {
     manualCancelledRef.current = true;
     setCancelling(true);
     try {
-      const res = await fetch(`/api/claims/${claimId}/cancel`, {
+      const res = await fetch(`${API_BASE}/api/claims/${claimId}/cancel`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -203,7 +204,7 @@ export default function Messages() {
   async function confirmTransfer() {
     setConfirmingTransfer(true);
     try {
-      const res = await fetch(`/api/claims/${claimId}/confirm-transfer`, {
+      const res = await fetch(`${API_BASE}/api/claims/${claimId}/confirm-transfer`, {
         method: 'POST',
         credentials: 'include',
       });
