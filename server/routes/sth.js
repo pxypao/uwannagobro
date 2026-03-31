@@ -50,8 +50,12 @@ router.post('/apply', requireAuth, upload.single('proof'), (req, res) => {
   res.json({ ok: true, pending: true });
 });
 
-// GET /api/admin/users — list all registered users (no password hashes)
+// GET /api/admin/users — list all registered users (requires ADMIN_SECRET)
 router.get('/users', (req, res) => {
+  const secret = process.env.ADMIN_SECRET;
+  if (!secret || req.query.secret !== secret) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   const users = db.prepare(`
     SELECT id, first_name, email, phone, created_at,
            is_verified_sth, sth_team, sth_verification_submitted
