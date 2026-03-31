@@ -4,6 +4,14 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const db = require('./db/database');
 
+// Auto-seed on every startup (idempotent — skips existing records)
+try {
+  require('./db/seed');
+  console.log('[startup] Seed completed');
+} catch (err) {
+  console.error('[startup] Seed failed:', err.message);
+}
+
 const authRoutes     = require('./routes/auth');
 const ticketRoutes   = require('./routes/tickets');
 const claimRoutes    = require('./routes/claims');
