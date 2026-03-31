@@ -1,21 +1,16 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const db = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
 const { getTier } = require('../lib/tiers');
 
 const router = express.Router();
 
-function issueToken(res, user) {
+function makeToken(user) {
   const payload = { id: user.id, email: user.email, first_name: user.first_name };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
 }
 
 // POST /api/auth/signup
@@ -50,8 +45,8 @@ router.post('/signup', (req, res) => {
   `).run(first_name.trim(), email.toLowerCase().trim(), phone.trim(), password_hash, date_of_birth);
 
   const user = { id: result.lastInsertRowid, email: email.toLowerCase().trim(), first_name: first_name.trim() };
-  issueToken(res, user);
-  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
+  const token = makeToken(user);
+  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
 });
 
 // POST /api/auth/login
@@ -65,17 +60,13 @@ router.post('/login', (req, res) => {
   const match = bcrypt.compareSync(password, user.password_hash);
   if (!match) return res.status(401).json({ error: 'Invalid email or password.' });
 
-  issueToken(res, user);
-  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
+  const token = makeToken(user);
+  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
 });
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  });
+  // Token is stored client-side; nothing to invalidate server-side
   res.json({ ok: true });
 });
 
@@ -94,6 +85,45 @@ router.get('/me', requireAuth, (req, res) => {
   const tier = getTier(listing_count);
 
   res.json({ user: { ...user, listing_count, tier } });
+});
+
+// POST /api/auth/forgot-password
+router.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required.' });
+
+  const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email.toLowerCase().trim());
+  if (user) {
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const expires = new Date(Date.now() + 3600000).toISOString(); // 1 hour
+    db.prepare('UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?')
+      .run(tokenHash, expires, user.id);
+    console.log('Reset link:', `https://uwannagobro.com/reset-password?token=${token}`);
+  }
+
+  // Always return success to prevent email enumeration
+  res.json({ message: "If an account exists with that email, you'll receive reset instructions shortly." });
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', (req, res) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
+  if (newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+  const user = db.prepare(
+    'SELECT id FROM users WHERE reset_token = ? AND reset_token_expires > ?'
+  ).get(tokenHash, new Date().toISOString());
+
+  if (!user) return res.status(400).json({ error: 'This reset link is invalid or has expired.' });
+
+  const password_hash = bcrypt.hashSync(newPassword, 12);
+  db.prepare('UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?')
+    .run(password_hash, user.id);
+
+  res.json({ message: 'Password updated successfully.' });
 });
 
 module.exports = router;

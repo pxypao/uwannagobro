@@ -47,6 +47,12 @@ export default function Nav({ openAuth }) {
           </Link>
         </div>
 
+        {/* Desktop-only nav links */}
+        <div className="nav-desktop-links" aria-label="Site links">
+          <Link to="/how-it-works" className="nav-text-link">How It Works</Link>
+          <Link to="/our-story" className="nav-text-link">Our Story</Link>
+        </div>
+
         <div className="nav-right">
           {user ? (
             <>

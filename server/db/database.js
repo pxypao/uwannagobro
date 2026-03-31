@@ -101,6 +101,10 @@ const migrations = [
   'ALTER TABLE tickets ADD COLUMN preferred_age_range TEXT NOT NULL DEFAULT "Any"',
   'ALTER TABLE tickets ADD COLUMN fan_level           TEXT NOT NULL DEFAULT "Either"',
   'ALTER TABLE tickets ADD COLUMN notes_to_seeker     TEXT NOT NULL DEFAULT ""',
+
+  // users — password reset
+  'ALTER TABLE users ADD COLUMN reset_token         TEXT',
+  'ALTER TABLE users ADD COLUMN reset_token_expires TEXT',
 ];
 
 let migrationsRun = 0;

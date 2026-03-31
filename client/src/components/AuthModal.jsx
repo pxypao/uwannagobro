@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { API_BASE } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 function calcAge(dob) {
   const birth = new Date(dob);
@@ -18,11 +18,15 @@ export default function AuthModal({ mode, onClose, switchMode }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState('auth'); // 'auth' | 'forgot' | 'forgot-sent'
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
   const firstRef = useRef(null);
 
   useEffect(() => {
     firstRef.current?.focus();
     setError('');
+    setView('auth');
   }, [mode]);
 
   // Trap focus inside modal
@@ -52,18 +56,17 @@ export default function AuthModal({ mode, onClose, switchMode }) {
 
     setLoading(true);
     try {
-      const endpoint = mode === 'signup' ? `${API_BASE}/api/auth/signup` : `${API_BASE}/api/auth/login`;
+      const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
       const body = mode === 'signup' ? form : { email: form.email, password: form.password };
 
-      const res = await fetch(endpoint, {
+      const res = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Something went wrong.'); return; }
-      login(data.user);
+      login(data.user, data.token);
       onClose();
     } catch {
       setError('Network error. Please try again.');
@@ -72,7 +75,108 @@ export default function AuthModal({ mode, onClose, switchMode }) {
     }
   }
 
+  async function handleForgot(e) {
+    e.preventDefault();
+    setForgotLoading(true);
+    setError('');
+    try {
+      await apiFetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail.trim() }),
+      });
+      setView('forgot-sent');
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setForgotLoading(false);
+    }
+  }
+
   const isSignup = mode === 'signup';
+
+  // ── Forgot password view ──
+  if (view === 'forgot') {
+    return (
+      <div
+        className="modal-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Forgot password"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <div className="modal">
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">×</button>
+          <h2 className="modal-title">Forgot Password</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+            Enter your email and we'll send you a link to reset your password.
+          </p>
+          {error && (
+            <div className="banner banner-warn" role="alert" style={{ marginBottom: '1rem' }}>{error}</div>
+          )}
+          <form onSubmit={handleForgot} noValidate>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="form-group">
+                <label htmlFor="forgot-email">Email</label>
+                <input
+                  ref={firstRef}
+                  id="forgot-email"
+                  className="form-control"
+                  type="email"
+                  value={forgotEmail}
+                  onChange={e => setForgotEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={forgotLoading}
+                style={{ padding: '0.7rem' }}
+              >
+                {forgotLoading ? 'Sending…' : 'Send Reset Link'}
+              </button>
+            </div>
+          </form>
+          <p style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            <button
+              style={{ background: 'none', border: 'none', color: 'var(--green)', fontWeight: 700, cursor: 'pointer', fontSize: 'inherit' }}
+              onClick={() => setView('auth')}
+            >
+              ← Back to Log In
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Forgot-sent confirmation view ──
+  if (view === 'forgot-sent') {
+    return (
+      <div
+        className="modal-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Reset link sent"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <div className="modal" style={{ textAlign: 'center' }}>
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">×</button>
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }} aria-hidden="true">📬</div>
+          <h2 className="modal-title">Check Your Inbox</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+            If an account exists with that email, you'll receive reset instructions shortly.
+          </p>
+          <button className="btn btn-primary" onClick={onClose} style={{ minWidth: '120px' }}>
+            Done
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -157,7 +261,19 @@ export default function AuthModal({ mode, onClose, switchMode }) {
             )}
 
             <div className="form-group">
-              <label htmlFor="auth-password">Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <label htmlFor="auth-password">Password</label>
+                {!isSignup && (
+                  <button
+                    type="button"
+                    style={{ background: 'none', border: 'none', color: 'var(--green)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                    onClick={() => setView('forgot')}
+                    aria-label="Forgot your password"
+                  >
+                    Forgot your password?
+                  </button>
+                )}
+              </div>
               <input
                 id="auth-password"
                 className="form-control"
