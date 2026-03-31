@@ -64,10 +64,10 @@ app.use('/api/admin',    sthRoutes); // POST /api/admin/verify-sth/:user_id
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// Generic error handler
+// Generic error handler — include message in dev AND production for now
 app.use((err, _req, res, _next) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: 'Internal server error', detail: err.message });
 });
 
 // ─── Background job: auto-cancel expired claims (Fix 3 & 4) ───
