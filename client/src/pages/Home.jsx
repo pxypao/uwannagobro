@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
-import { API_BASE } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 const SPORTS = ['All Sports', 'Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
 
@@ -23,7 +23,7 @@ export default function Home({ openAuth }) {
       const params = new URLSearchParams();
       if (zip) params.set('zip', zip);
       if (sport !== 'All Sports') params.set('sport', sport);
-      const res = await fetch(`${API_BASE}/api/tickets?${params}`, { credentials: 'include' });
+      const res = await apiFetch(`/api/tickets?${params}`, {});
       if (res.ok) {
         const data = await res.json();
         setTickets(data.tickets);
@@ -36,7 +36,7 @@ export default function Home({ openAuth }) {
   // Fetch active claim so we know if user can claim more tickets
   useEffect(() => {
     if (!user) { setActiveClaim(null); return; }
-    fetch(`${API_BASE}/api/my/claim`, { credentials: 'include' })
+    apiFetch(`/api/my/claim`, {})
       .then(r => r.json())
       .then(d => setActiveClaim(d.claim))
       .catch(() => {});
@@ -51,9 +51,8 @@ export default function Home({ openAuth }) {
       return;
     }
     try {
-      const res = await fetch(`${API_BASE}/api/tickets/${ticketId}/claim`, {
+      const res = await apiFetch(`/api/tickets/${ticketId}/claim`, {
         method: 'POST',
-        credentials: 'include',
       });
       const data = await res.json();
       if (res.status === 403) {

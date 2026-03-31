@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { API_BASE } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 export default function STHVerifyModal({ user, onClose, onSubmitted }) {
   const [team, setTeam]       = useState('');
@@ -33,9 +33,8 @@ export default function STHVerifyModal({ user, onClose, onSubmitted }) {
       fd.append('team',  team.trim());
       fd.append('proof', file);
 
-      const res = await fetch(`${API_BASE}/api/sth/apply`, {
+      const res = await apiFetch(`/api/sth/apply`, {
         method: 'POST',
-        credentials: 'include',
         body: fd,
       });
       const data = await res.json();

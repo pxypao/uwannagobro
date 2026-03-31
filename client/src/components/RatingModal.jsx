@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_BASE } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 export default function RatingModal({ claimId, listerName, onDone, onDismiss }) {
   const [hovered, setHovered]   = useState(0);
@@ -12,10 +12,9 @@ export default function RatingModal({ claimId, listerName, onDone, onDismiss }) 
     setSubmitting(true);
     setError('');
     try {
-      const res = await fetch(`${API_BASE}/api/ratings/${claimId}`, {
+      const res = await apiFetch(`/api/ratings/${claimId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ stars: selected }),
       });
       const data = await res.json();

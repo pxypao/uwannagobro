@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import STHBadge from './STHBadge';
-import { API_BASE } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 function initials(name) {
   if (!name) return '?';
@@ -37,7 +37,7 @@ export default function HostProfileModal({ listerId, listerName, onClose, ticket
 
   useEffect(() => {
     if (!listerId) return;
-    fetch(`${API_BASE}/api/users/${listerId}/profile`, { credentials: 'include' })
+    apiFetch(`/api/users/${listerId}/profile`)
       .then(r => r.json())
       .then(d => {
         if (d.profile) setProfile(d.profile);
