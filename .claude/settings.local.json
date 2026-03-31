@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(node db/seed.js)",
+      "Bash(timeout 4 node index.js)",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(node:*)",
+      "Bash(curl -s http://localhost:3001/api/tickets)",
+      "Bash(curl -sv http://localhost:3001/api/health)",
+      "Bash(curl -s http://localhost:3001/api/users/1/profile)",
+      "Bash(curl -s -X POST http://localhost:3001/api/admin/verify-sth/3)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
