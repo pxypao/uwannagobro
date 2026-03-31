@@ -50,6 +50,16 @@ router.post('/apply', requireAuth, upload.single('proof'), (req, res) => {
   res.json({ ok: true, pending: true });
 });
 
+// GET /api/admin/users — list all registered users (no password hashes)
+router.get('/users', (req, res) => {
+  const users = db.prepare(`
+    SELECT id, first_name, email, phone, created_at,
+           is_verified_sth, sth_team, sth_verification_submitted
+    FROM users ORDER BY created_at DESC
+  `).all();
+  res.json({ count: users.length, users });
+});
+
 // POST /api/admin/verify-sth/:user_id  — admin toggle (no auth guard in dev)
 // mounted at /api/admin → route is /verify-sth/:user_id
 router.post('/verify-sth/:user_id', (req, res) => {
