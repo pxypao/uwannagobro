@@ -5,36 +5,38 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // Helper: compute Good Host status for a user
-function getRatingInfo(userId) {
-  const row = db.prepare(`
+async function getRatingInfo(userId) {
+  const result = await db.query(`
     SELECT
-      COUNT(*)          AS total,
-      AVG(r.stars)      AS avg_stars
+      COUNT(*)     AS total,
+      AVG(r.stars) AS avg_stars
     FROM ratings r
-    WHERE r.ratee_id = ?
-  `).get(userId);
+    WHERE r.ratee_id = $1
+  `, [userId]);
 
-  const total     = row.total || 0;
-  const avg_stars = row.avg_stars ? Math.round(row.avg_stars * 10) / 10 : null;
+  const row      = result.rows[0];
+  const total    = parseInt(row.total, 10) || 0;
+  const avg_stars = row.avg_stars ? Math.round(parseFloat(row.avg_stars) * 10) / 10 : null;
   const good_host = total >= 3 && avg_stars >= 4.0;
 
   return { total, avg_stars, good_host };
 }
 
 // POST /api/ratings/:claim_id  — seeker submits a rating
-router.post('/:claim_id', requireAuth, (req, res) => {
+router.post('/:claim_id', requireAuth, async (req, res) => {
   const { stars } = req.body;
   if (!stars || stars < 1 || stars > 5) {
     return res.status(400).json({ error: 'stars must be between 1 and 5.' });
   }
 
   // Load the claim + ticket to verify permissions
-  const claim = db.prepare(`
+  const claimRes = await db.query(`
     SELECT c.*, t.lister_id, t.date AS ticket_date
     FROM claims c
     JOIN tickets t ON t.id = c.ticket_id
-    WHERE c.id = ?
-  `).get(req.params.claim_id);
+    WHERE c.id = $1
+  `, [req.params.claim_id]);
+  const claim = claimRes.rows[0];
 
   if (!claim) return res.status(404).json({ error: 'Claim not found.' });
 
@@ -51,23 +53,19 @@ router.post('/:claim_id', requireAuth, (req, res) => {
   }
 
   try {
-    db.prepare(`
-      INSERT INTO ratings (claim_id, rater_id, ratee_id, stars)
-      VALUES (?, ?, ?, ?)
-    `).run(claim.id, req.user.id, claim.lister_id, parseInt(stars, 10));
+    await db.query(
+      `INSERT INTO ratings (claim_id, rater_id, ratee_id, stars) VALUES ($1, $2, $3, $4)`,
+      [claim.id, req.user.id, claim.lister_id, parseInt(stars, 10)]
+    );
   } catch (e) {
-    if (e.message && e.message.includes('UNIQUE')) {
+    if (e.code === '23505') {
       return res.status(409).json({ error: 'You have already rated this meet.' });
     }
     throw e;
   }
 
-  res.status(201).json({ ok: true, ...getRatingInfo(claim.lister_id) });
-});
-
-// GET /api/users/:id/rating
-router.get('/:id/rating', (req, res) => {
-  res.json(getRatingInfo(parseInt(req.params.id, 10)));
+  const info = await getRatingInfo(claim.lister_id);
+  res.status(201).json({ ok: true, ...info });
 });
 
 module.exports = { router, getRatingInfo };

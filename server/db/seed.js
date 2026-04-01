@@ -1,24 +1,6 @@
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
 const db = require('./database');
 
-// Seed a system lister account if it doesn't exist
-const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('seed@rallybro.com');
-let listerId;
-
-if (!existing) {
-  const bcrypt = require('bcryptjs');
-  const hash = bcrypt.hashSync('SeedPass123!', 10);
-  const result = db.prepare(`
-    INSERT INTO users (first_name, email, phone, password_hash, date_of_birth)
-    VALUES ('Community', 'seed@rallybro.com', '5035550000', ?, '1990-01-01')
-  `).run(hash);
-  listerId = result.lastInsertRowid;
-  console.log('Created seed user id:', listerId);
-} else {
-  listerId = existing.id;
-  console.log('Seed user already exists, id:', listerId);
-}
-
 const seeds = [
   {
     title: 'Portland Pickles vs Walla Walla Sweets',
@@ -54,18 +36,42 @@ const seeds = [
   },
 ];
 
-const insert = db.prepare(`
-  INSERT INTO tickets (lister_id, title, sport, date, time, venue, zip, status)
-  VALUES (@lister_id, @title, @sport, @date, @time, @venue, @zip, 'open')
-`);
+async function seed() {
+  const existingRes = await db.query('SELECT id FROM users WHERE email = $1', ['seed@rallybro.com']);
+  let listerId;
 
-let added = 0;
-for (const seed of seeds) {
-  const exists = db.prepare('SELECT id FROM tickets WHERE title = ? AND lister_id = ?').get(seed.title, listerId);
-  if (!exists) {
-    insert.run({ lister_id: listerId, ...seed });
-    added++;
+  if (existingRes.rows.length === 0) {
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('SeedPass123!', 10);
+    const result = await db.query(
+      `INSERT INTO users (first_name, email, phone, password_hash, date_of_birth)
+       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+      ['Community', 'seed@rallybro.com', '5035550000', hash, '1990-01-01']
+    );
+    listerId = result.rows[0].id;
+    console.log('Created seed user id:', listerId);
+  } else {
+    listerId = existingRes.rows[0].id;
+    console.log('Seed user already exists, id:', listerId);
   }
+
+  let added = 0;
+  for (const seedItem of seeds) {
+    const exists = await db.query(
+      'SELECT id FROM tickets WHERE title = $1 AND lister_id = $2',
+      [seedItem.title, listerId]
+    );
+    if (exists.rows.length === 0) {
+      await db.query(
+        `INSERT INTO tickets (lister_id, title, sport, date, time, venue, zip, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'open')`,
+        [listerId, seedItem.title, seedItem.sport, seedItem.date, seedItem.time, seedItem.venue, seedItem.zip]
+      );
+      added++;
+    }
+  }
+
+  console.log(`Seeded ${added} ticket(s). (${seeds.length - added} already existed)`);
 }
 
-console.log(`Seeded ${added} ticket(s). (${seeds.length - added} already existed)`);
+module.exports = seed;

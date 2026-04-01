@@ -4,13 +4,12 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-const ALLOWED_SPORTS = ['Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
-
+const ALLOWED_SPORTS      = ['Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
 const ALLOWED_FAN_LEVELS  = ['Casual', 'Die-Hard', ''];
 const ALLOWED_AGE_RANGES  = ['Any', '18-25', '26-35', '36-50', '50+', ''];
 
 // PUT /api/profile
-router.put('/', requireAuth, (req, res) => {
+router.put('/', requireAuth, async (req, res) => {
   let { favorite_team, sports_interests, fan_since_year, bio,
         seeker_fan_level, seeker_age_range } = req.body;
 
@@ -45,44 +44,45 @@ router.put('/', requireAuth, (req, res) => {
     fan_since_year = null;
   }
 
-  const s_fan   = ALLOWED_FAN_LEVELS.includes(seeker_fan_level)  ? (seeker_fan_level  || '') : '';
-  const s_age   = ALLOWED_AGE_RANGES.includes(seeker_age_range)  ? (seeker_age_range  || '') : '';
+  const s_fan = ALLOWED_FAN_LEVELS.includes(seeker_fan_level) ? (seeker_fan_level || '') : '';
+  const s_age = ALLOWED_AGE_RANGES.includes(seeker_age_range) ? (seeker_age_range || '') : '';
 
-  db.prepare(`
+  await db.query(`
     UPDATE users
-    SET favorite_team    = ?,
-        sports_interests = ?,
-        fan_since_year   = ?,
-        bio              = ?,
-        seeker_fan_level = ?,
-        seeker_age_range = ?
-    WHERE id = ?
-  `).run(
+    SET favorite_team    = $1,
+        sports_interests = $2,
+        fan_since_year   = $3,
+        bio              = $4,
+        seeker_fan_level = $5,
+        seeker_age_range = $6
+    WHERE id = $7
+  `, [
     (favorite_team || '').trim().slice(0, 100),
     sports_interests,
     fan_since_year,
     (bio || '').trim().slice(0, 160),
     s_fan,
     s_age,
-    req.user.id
-  );
+    req.user.id,
+  ]);
 
-  const updated = db.prepare(`
+  const updatedRes = await db.query(`
     SELECT id, first_name, email, favorite_team, sports_interests, fan_since_year, bio,
            seeker_fan_level, seeker_age_range
-    FROM users WHERE id = ?
-  `).get(req.user.id);
+    FROM users WHERE id = $1
+  `, [req.user.id]);
 
-  res.json({ profile: updated });
+  res.json({ profile: updatedRes.rows[0] });
 });
 
 // GET /api/profile — own profile (auth required)
-router.get('/', requireAuth, (req, res) => {
-  const profile = db.prepare(`
+router.get('/', requireAuth, async (req, res) => {
+  const profileRes = await db.query(`
     SELECT id, first_name, email, favorite_team, sports_interests, fan_since_year, bio,
            seeker_fan_level, seeker_age_range
-    FROM users WHERE id = ?
-  `).get(req.user.id);
+    FROM users WHERE id = $1
+  `, [req.user.id]);
+  const profile = profileRes.rows[0];
 
   res.json({
     profile: {

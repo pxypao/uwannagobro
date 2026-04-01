@@ -26,7 +26,7 @@ const upload = multer({
 });
 
 // POST /api/sth/apply  — submit verification request
-router.post('/apply', requireAuth, upload.single('proof'), (req, res) => {
+router.post('/apply', requireAuth, upload.single('proof'), async (req, res) => {
   const { team } = req.body;
   if (!team || !team.trim()) {
     return res.status(400).json({ error: 'Team name is required.' });
@@ -35,44 +35,47 @@ router.post('/apply', requireAuth, upload.single('proof'), (req, res) => {
     return res.status(400).json({ error: 'Proof of season ticket is required.' });
   }
 
-  const user = db.prepare('SELECT is_verified_sth, sth_verification_submitted FROM users WHERE id = ?').get(req.user.id);
+  const userRes = await db.query(
+    'SELECT is_verified_sth, sth_verification_submitted FROM users WHERE id = $1',
+    [req.user.id]
+  );
+  const user = userRes.rows[0];
   if (user.is_verified_sth) {
     return res.status(409).json({ error: 'You are already verified.' });
   }
 
-  db.prepare(`
-    UPDATE users
-    SET sth_verification_submitted = 1,
-        sth_team = ?
-    WHERE id = ?
-  `).run(team.trim().slice(0, 100), req.user.id);
+  await db.query(
+    `UPDATE users SET sth_verification_submitted = TRUE, sth_team = $1 WHERE id = $2`,
+    [team.trim().slice(0, 100), req.user.id]
+  );
 
   res.json({ ok: true, pending: true });
 });
 
 // GET /api/admin/users — list all registered users (requires ADMIN_SECRET)
-router.get('/users', (req, res) => {
+router.get('/users', async (req, res) => {
   const secret = process.env.ADMIN_SECRET;
   if (!secret || req.query.secret !== secret) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const users = db.prepare(`
+  const result = await db.query(`
     SELECT id, first_name, email, phone, created_at,
            is_verified_sth, sth_team, sth_verification_submitted
     FROM users ORDER BY created_at DESC
-  `).all();
-  res.json({ count: users.length, users });
+  `);
+  res.json({ count: result.rows.length, users: result.rows });
 });
 
-// POST /api/admin/verify-sth/:user_id  — admin toggle (no auth guard in dev)
-// mounted at /api/admin → route is /verify-sth/:user_id
-router.post('/verify-sth/:user_id', (req, res) => {
-  const user = db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.user_id);
+// POST /api/admin/verify-sth/:user_id  — admin toggle
+router.post('/verify-sth/:user_id', async (req, res) => {
+  const userRes = await db.query('SELECT id FROM users WHERE id = $1', [req.params.user_id]);
+  const user = userRes.rows[0];
   if (!user) return res.status(404).json({ error: 'User not found.' });
 
-  db.prepare(`
-    UPDATE users SET is_verified_sth = 1, sth_verification_submitted = 1 WHERE id = ?
-  `).run(user.id);
+  await db.query(
+    `UPDATE users SET is_verified_sth = TRUE, sth_verification_submitted = TRUE WHERE id = $1`,
+    [user.id]
+  );
 
   res.json({ ok: true, user_id: user.id });
 });
