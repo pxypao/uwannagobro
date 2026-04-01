@@ -13,7 +13,8 @@
       "Bash(curl -s -X POST http://localhost:3001/api/admin/verify-sth/3)",
       "Bash(npm run:*)",
       "Bash(ls /Users/jadentheboss/uwannagobro/server/*.js)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx vercel:*)"
     ]
   }
 }

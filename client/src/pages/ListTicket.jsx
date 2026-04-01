@@ -66,7 +66,7 @@ export default function ListTicket({ openAuth }) {
     <main className="list-page" id="main-content">
       <h1>List a Ticket</h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-        Share your extra ticket and bring a fan along for the game — no cost to them.
+        Share your extra ticket and bring a fan along for the game. No cost to them.
       </p>
 
       {success && (
@@ -256,7 +256,7 @@ export default function ListTicket({ openAuth }) {
           style={{ padding: '0.75rem' }}
           aria-label="Submit ticket listing"
         >
-          {submitting ? 'Listing…' : '🎫 List My Ticket'}
+          {submitting ? 'Listing…' : 'List My Ticket'}
         </button>
       </form>
     </main>

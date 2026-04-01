@@ -79,7 +79,7 @@ export default function HostProfileModal({ listerId, listerName, onClose, ticket
                 </h2>
                 <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
                   {profile.good_host && (
-                    <span className="badge-good-host">⭐ Good Host</span>
+                    <span className="badge-good-host">Good Host</span>
                   )}
                   {profile.is_verified_sth ? (
                     <STHBadge team={profile.sth_team} size="md" />
@@ -100,7 +100,7 @@ export default function HostProfileModal({ listerId, listerName, onClose, ticket
               {profile.favorite_team && (
                 <div className="host-profile-row">
                   <span className="host-profile-label">Favorite Team</span>
-                  <span className="host-profile-value">🏆 {profile.favorite_team}</span>
+                  <span className="host-profile-value">{profile.favorite_team}</span>
                 </div>
               )}
 
@@ -118,7 +118,7 @@ export default function HostProfileModal({ listerId, listerName, onClose, ticket
               {profile.fan_since_year && (
                 <div className="host-profile-row">
                   <span className="host-profile-label">Fan Since</span>
-                  <span className="host-profile-value">📅 {profile.fan_since_year}</span>
+                  <span className="host-profile-value">{profile.fan_since_year}</span>
                 </div>
               )}
 

@@ -60,7 +60,6 @@ export default function STHVerifyModal({ user, onClose, onSubmitted }) {
         <button className="modal-close" onClick={onClose} aria-label="Close">×</button>
 
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }} aria-hidden="true">🎟️</div>
           <h2 className="modal-title" style={{ fontSize: '1.6rem', marginBottom: '0.3rem' }}>
             Verify Season Tickets
           </h2>

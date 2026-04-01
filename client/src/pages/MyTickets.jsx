@@ -153,7 +153,7 @@ export default function MyTickets() {
         )}
         {tierProgress?.current?.name === 'Legend' && (
           <p style={{ fontSize: '0.82rem', color: 'var(--gold-dark)', fontWeight: 600, marginTop: '0.25rem' }}>
-            👑 You've reached the top — Legend status!
+            You've reached the top: Legend status!
           </p>
         )}
 
@@ -187,7 +187,6 @@ export default function MyTickets() {
 
         {listings.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon" aria-hidden="true">🎟️</div>
             <h3>No listings yet</h3>
             <p>Got a spare ticket? <Link to="/list">List it for free →</Link></p>
           </div>
@@ -220,7 +219,7 @@ export default function MyTickets() {
                       className="btn btn-primary btn-sm"
                       aria-label={`Chat about ${ticket.title}`}
                     >
-                      💬 Chat
+                      Chat
                     </Link>
                   )}
                   {ticket.status === 'open' && (
@@ -265,7 +264,6 @@ export default function MyTickets() {
 
         {!activeClaim ? (
           <div className="empty-state">
-            <div className="empty-state-icon" aria-hidden="true">🤝</div>
             <h3>No active meet</h3>
             <p>Claim a free ticket to join a game day meet. <Link to="/">Browse tickets →</Link></p>
           </div>
@@ -292,7 +290,7 @@ export default function MyTickets() {
                   className="btn btn-primary btn-sm"
                   aria-label={`Chat about ${activeClaim.title}`}
                 >
-                  💬 Chat
+                  Chat
                 </Link>
                 <button
                   className="btn btn-danger btn-sm"

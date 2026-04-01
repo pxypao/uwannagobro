@@ -5,7 +5,7 @@ import React from 'react';
  * size: 'sm' | 'md'
  */
 export default function STHBadge({ team, size = 'sm' }) {
-  const label = team ? `✓ Season Ticket Holder — ${team}` : '✓ Season Ticket Holder';
+  const label = team ? `Season Ticket Holder: ${team}` : 'Season Ticket Holder';
   const fontSize = size === 'md' ? '0.82rem' : '0.7rem';
   const padding  = size === 'md' ? '0.2rem 0.7rem' : '0.12rem 0.55rem';
 

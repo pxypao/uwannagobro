@@ -34,7 +34,6 @@ export default function BottomNav() {
         className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}
         aria-label="Browse tickets"
       >
-        <span className="bottom-nav-icon" aria-hidden="true">🏟️</span>
         <span>Browse</span>
       </NavLink>
 
@@ -52,7 +51,6 @@ export default function BottomNav() {
         className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}
         aria-label={`Messages${unread > 0 ? `, ${unread} unread` : ''}`}
       >
-        <span className="bottom-nav-icon" aria-hidden="true">💬</span>
         {unread > 0 && <span className="bottom-nav-dot" aria-hidden="true" />}
         <span>Messages</span>
       </NavLink>

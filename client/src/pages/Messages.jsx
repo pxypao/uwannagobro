@@ -224,7 +224,6 @@ export default function Messages() {
     return (
       <main className="container" id="main-content" style={{ paddingTop: '2rem' }}>
         <div className="empty-state">
-          <div className="empty-state-icon" aria-hidden="true">💬</div>
           <h3>No active conversations</h3>
           <p>
             Claim a ticket or have someone claim yours to start a chat.{' '}
@@ -333,7 +332,7 @@ export default function Messages() {
               fontWeight: 500,
             }}
           >
-            👋 Say hello to {otherName}! You must respond within{' '}
+            Say hello to {otherName}! You must respond within{' '}
             <strong>{timeRemaining(transferStatus.response_deadline)}</strong> or this ticket will be released.
           </div>
         )
@@ -356,7 +355,7 @@ export default function Messages() {
               fontWeight: 500,
             }}
           >
-            ✅ Ticket transfer confirmed! Enjoy the game.
+            Ticket transfer confirmed! Enjoy the game.
           </div>
         ) : iAmLister ? (
           <div
@@ -429,7 +428,7 @@ export default function Messages() {
         aria-live="polite"
       >
         {messages.length === 0 && (
-          <div className="no-messages">No messages yet — say hi! 👋</div>
+          <div className="no-messages">No messages yet. Say hi!</div>
         )}
         {messages.map(msg => {
           const isSystem = msg.sender_id === 0 || msg.sender_id === null;

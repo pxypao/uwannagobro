@@ -40,7 +40,6 @@ export default function RatingModal({ claimId, listerName, onDone, onDismiss }) 
       <div className="modal" style={{ textAlign: 'center', maxWidth: '380px' }}>
         <button className="modal-close" onClick={onDismiss} aria-label="Close">×</button>
 
-        <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }} aria-hidden="true">🏟️</div>
         <h2 className="modal-title" style={{ fontSize: '1.6rem', marginBottom: '0.4rem' }}>
           Rate Your Experience
         </h2>
@@ -80,7 +79,7 @@ export default function RatingModal({ claimId, listerName, onDone, onDismiss }) 
 
         {selected > 0 && (
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
-            {['', 'Rough night 😬', 'It was okay 🙂', 'Pretty good! 👍', 'Great time! 😄', 'Absolutely amazing! 🏆'][selected]}
+            {['', 'Rough night', 'It was okay', 'Pretty good!', 'Great time!', 'Absolutely amazing!'][selected]}
           </p>
         )}
 

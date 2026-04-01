@@ -16,7 +16,7 @@ export default function TierBadge({ tier, size = 'sm' }) {
       className="tier-badge"
       data-tier={tier.name.toLowerCase()}
       title={tier.description}
-      aria-label={`Tier: ${tier.name} — ${tier.description}`}
+      aria-label={`Tier: ${tier.name}. ${tier.description}`}
       style={{ fontSize, padding }}
     >
       {tier.emoji}

@@ -2,14 +2,6 @@ import React, { useState } from 'react';
 import STHBadge from './STHBadge';
 import HostProfileModal from './HostProfileModal';
 
-const SPORT_EMOJI = {
-  Baseball:   '⚾',
-  Soccer:     '⚽',
-  Basketball: '🏀',
-  Football:   '🏈',
-  Hockey:     '🏒',
-};
-
 function initials(name) {
   if (!name) return '?';
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
@@ -30,7 +22,6 @@ function formatTime(timeStr) {
 }
 
 export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
-  const emoji = SPORT_EMOJI[ticket.sport] || '🎫';
   const isLegend = ticket.lister_tier?.name === 'Legend';
   const [showProfile, setShowProfile] = useState(false);
 
@@ -43,7 +34,7 @@ export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
       <div className="ticket-card-body">
         <div className="ticket-card-badges">
           <span className="badge badge-green" aria-label={`Sport: ${ticket.sport}`}>
-            {emoji} {ticket.sport}
+            {ticket.sport}
           </span>
           <span className="badge badge-gold" aria-label="Free ticket">FREE</span>
         </div>
@@ -51,8 +42,8 @@ export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
         <h3 className="ticket-card-title">{ticket.title}</h3>
 
         <div className="ticket-card-meta">
-          <span>📅 {formatDate(ticket.date)} · {formatTime(ticket.time)}</span>
-          <span>📍 {ticket.venue}</span>
+          <span>{formatDate(ticket.date)} · {formatTime(ticket.time)}</span>
+          <span>{ticket.venue}</span>
         </div>
 
         {ticket.notes_to_seeker && (
@@ -72,7 +63,7 @@ export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
               <span style={{ fontWeight: 600 }}>{ticket.lister_name}</span>
               <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 {ticket.lister_good_host && (
-                  <span className="badge-good-host" aria-label="Good Host">⭐ Good Host</span>
+                  <span className="badge-good-host" aria-label="Good Host">Good Host</span>
                 )}
                 {ticket.lister_is_verified_sth ? (
                   <STHBadge team={ticket.lister_sth_team} size="sm" />
@@ -85,7 +76,7 @@ export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
             <span
               className="btn btn-sm"
               style={{ background: '#e5e7eb', color: 'var(--text-muted)', border: '2px solid var(--border)', cursor: 'default' }}
-              aria-label="Unavailable — you already have an active claimed ticket"
+              aria-label="Unavailable: you already have an active claimed ticket"
               title="You already have an active claimed ticket"
             >
               Unavailable

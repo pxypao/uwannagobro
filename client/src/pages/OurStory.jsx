@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const VALUES = [
-  { icon: '🤝', title: 'Community First',        body: 'Every feature we build is designed to bring fans closer together, not to maximize revenue.' },
-  { icon: '🎟️', title: 'Accessibility',           body: 'Sports should be for everyone — not just those who can afford last-minute markup prices.' },
-  { icon: '🛡️', title: 'Trust & Safety',          body: 'Real identities, age verification, and in-app communication keep our community safe.' },
-  { icon: '🚫💰', title: 'No profit from tickets', body: 'Tickets are always free on our platform. We will never take a cut of a ticket\'s value.' },
+  { title: 'Community First',        body: 'Every feature we build is designed to bring fans closer together, not to maximize revenue.' },
+  { title: 'Accessibility',           body: 'Sports should be for everyone, not just those who can afford last-minute markup prices.' },
+  { title: 'Trust & Safety',          body: 'Real identities, age verification, and in-app communication keep our community safe.' },
+  { title: 'No profit from tickets', body: 'Tickets are always free on our platform. We will never take a cut of a ticket\'s value.' },
 ];
 
 export default function OurStory({ openAuth }) {
@@ -28,7 +28,7 @@ export default function OurStory({ openAuth }) {
           <div className="story-eyebrow">The Problem</div>
           <h2 className="story-heading">Thousands of empty seats. Thousands of fans who should be in them.</h2>
           <p className="story-body">
-            Every week, sports fans miss games they already paid for. Life happens — work, travel, family.
+            Every week, sports fans miss games they already paid for. Life happens: work, travel, family.
             Their seats sit empty while other fans who would love to be there never get the chance.
             We thought that was wrong.
           </p>
@@ -45,7 +45,7 @@ export default function OurStory({ openAuth }) {
           <div className="story-eyebrow">The Idea</div>
           <h2 className="story-heading">What if unused tickets became connections?</h2>
           <p className="story-body">
-            RallyBro started with a simple question — what if the fan who can't make it could give another
+            RallyBro started with a simple question: what if the fan who can't make it could give another
             fan the experience of a lifetime? No scalping. No resale. No profit. Just two sports fans going
             to a game together.
           </p>
@@ -67,7 +67,6 @@ export default function OurStory({ openAuth }) {
           <div className="story-values-grid">
             {VALUES.map(v => (
               <div key={v.title} className="story-value-card">
-                <span className="story-value-icon" aria-hidden="true">{v.icon}</span>
                 <h3 className="story-value-title">{v.title}</h3>
                 <p className="story-value-body">{v.body}</p>
               </div>
@@ -82,13 +81,13 @@ export default function OurStory({ openAuth }) {
           <div className="story-eyebrow">Where We're From</div>
           <h2 className="story-heading">Rooted in Portland sports culture</h2>
           <p className="story-body">
-            We built RallyBro in Portland, Oregon — home of the Timbers Army, Rip City, and some of the
+            We built RallyBro in Portland, Oregon, home of the Timbers Army, Rip City, and some of the
             most passionate sports fans in the country. The culture here is different. Fans don't just watch
             games, they live them. They share scarves, chants, and postgame beers with strangers who
             become friends.
           </p>
           <p className="story-body">
-            That spirit — of community, of generosity, of showing up for each other — is what RallyBro
+            That spirit of community, of generosity, of showing up for each other, is what RallyBro
             is built on. We started here, but the idea belongs to every city, every stadium, every fan
             who's ever wished they had someone to go to a game with.
           </p>

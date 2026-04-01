@@ -31,7 +31,7 @@ export default function Terms() {
           <ul>
             <li>Be at least <strong>18 years of age</strong>. We verify your date of birth at signup.</li>
             <li>Have only <strong>one account</strong>. Creating multiple accounts is prohibited.</li>
-            <li>Be a <strong>real person</strong> — bots, automated accounts, and fake profiles are not permitted.</li>
+            <li>Be a <strong>real person</strong>. Bots, automated accounts, and fake profiles are not permitted.</li>
             <li>Provide accurate and truthful information during registration.</li>
           </ul>
           <p>
@@ -67,7 +67,7 @@ export default function Terms() {
           <h2 id="tos-5">5. Prohibited Conduct</h2>
           <p>Users may not:</p>
           <ul>
-            <li><strong>Scalp or resell tickets</strong> — any request for payment, compensation, or "expenses" in connection with a ticket is strictly prohibited.</li>
+            <li><strong>Scalp or resell tickets</strong>: any request for payment, compensation, or "expenses" in connection with a ticket is strictly prohibited.</li>
             <li>Create <strong>fake or duplicate accounts</strong>.</li>
             <li>Harass, threaten, or demean other users.</li>
             <li>Request or offer <strong>off-platform payment</strong> of any kind in exchange for tickets.</li>

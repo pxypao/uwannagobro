@@ -7,7 +7,7 @@ const SECTIONS = [
     items: [
       {
         q: 'What is RallyBro?',
-        a: 'RallyBro is a free platform that connects sports fans who have an extra ticket ("Listers") with fans who want to attend ("Seekers"). Listers offer their spare seats at no cost, and Seekers claim them — creating a genuine game-day connection between two fans.',
+        a: 'RallyBro is a free platform that connects sports fans who have an extra ticket ("Listers") with fans who want to attend ("Seekers"). Listers offer their spare seats at no cost, and Seekers claim them, creating a genuine game-day connection between two fans.',
       },
       {
         q: 'Is it really free?',
@@ -48,7 +48,7 @@ const SECTIONS = [
       },
       {
         q: 'Do I need to pay anything?',
-        a: 'Never. Seeking a ticket on RallyBro is completely free. If anyone requests payment — inside or outside the app — please report it immediately.',
+        a: 'Never. Seeking a ticket on RallyBro is completely free. If anyone requests payment, inside or outside the app, please report it immediately.',
       },
     ],
   },
@@ -65,7 +65,7 @@ const SECTIONS = [
       },
       {
         q: 'What if nobody claims my ticket?',
-        a: 'Your listing stays open until someone claims it or you cancel it. There\'s no expiry — the ticket remains visible to seekers right up to the event.',
+        a: 'Your listing stays open until someone claims it or you cancel it. There\'s no expiry. The ticket remains visible to seekers right up to the event.',
       },
       {
         q: 'What if the Seeker doesn\'t respond?',
@@ -82,7 +82,7 @@ const SECTIONS = [
     items: [
       {
         q: 'How does the discount work?',
-        a: 'Partner stadiums offer exclusive discounts — on concessions, merchandise, or future tickets — to verified RallyBro members. Details vary by partner. Look for the partner badge on listings.',
+        a: 'Partner stadiums offer exclusive discounts on concessions, merchandise, or future tickets to verified RallyBro members. Details vary by partner. Look for the partner badge on listings.',
       },
       {
         q: 'How do I become a partner stadium?',

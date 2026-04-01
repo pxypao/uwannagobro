@@ -56,7 +56,7 @@ export default function Home({ openAuth }) {
       });
       const data = await res.json();
       if (res.status === 403) {
-        setClaimBanner("You can't claim your own ticket — list it for someone else to enjoy!");
+        setClaimBanner("You can't claim your own ticket. List it for someone else to enjoy!");
         setTimeout(() => setClaimBanner(''), 5000);
         return;
       }
@@ -84,7 +84,7 @@ export default function Home({ openAuth }) {
       <section className="hero" aria-label="Hero">
         <div className="container">
           <h1 className="hero-headline">
-            Got an <span className="gold">extra ticket?</span><br />Find your rally buddy.
+            Got an <span className="gold">extra ticket?</span><br />Find your rally bro.
           </h1>
           <div className="hero-tagline-badge" aria-label="Tagline">
             Free tickets. Real friends. Game day.
@@ -172,7 +172,6 @@ export default function Home({ openAuth }) {
           </div>
         ) : tickets.length === 0 ? (
           <div className="empty-state" aria-live="polite">
-            <div className="empty-state-icon" aria-hidden="true">🎫</div>
             <h3>No tickets found</h3>
             <p>
               {zip ? `No open tickets near ${zip}. ` : ''}
