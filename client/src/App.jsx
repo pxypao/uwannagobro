@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './context/AuthContext';
 import Nav from './components/Nav';
 import BottomNav from './components/BottomNav';
@@ -47,6 +48,7 @@ export default function App() {
         />
       )}
     </AuthProvider>
+    <Analytics />
     </HelmetProvider>
   );
 }
