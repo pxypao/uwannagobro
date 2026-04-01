@@ -11,9 +11,9 @@ const corsOptions = {
     'https://rallybro.com',
     'https://www.rallybro.com',
     'https://rallybro.vercel.app',
+    'https://uwannagobro.vercel.app',
     'http://localhost:5173',
-    'http://localhost:4173',
-    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+    'http://localhost:3000',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -158,7 +158,7 @@ async function runAutoCancel() {
 
 // BUG 2: keep-alive ping every 14 minutes to prevent Render free tier sleeping
 function keepAlive() {
-  https.get('https://rallybro-api.onrender.com/api/health', (res) => {
+  https.get('https://rallybro-api.onrender.com/api/tickets', (res) => {
     console.log('[keep-alive] ping', res.statusCode);
     res.resume();
   }).on('error', (err) => {
