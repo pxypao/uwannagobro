@@ -34,7 +34,7 @@ export default function HowItWorks({ openAuth }) {
       {/* ─── Hero ─── */}
       <section className="hiw-hero" aria-label="How it works hero">
         <div className="container">
-          <h1 className="hiw-hero-title">How <span>UWannaGoBro</span> Works</h1>
+          <h1 className="hiw-hero-title">How <span>RallyBro</span> Works</h1>
           <p className="hiw-hero-sub">Two fans. One spare ticket. A game to remember.</p>
         </div>
       </section>

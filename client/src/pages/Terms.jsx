@@ -14,12 +14,12 @@ export default function Terms() {
         <section aria-labelledby="tos-1">
           <h2 id="tos-1">1. Introduction &amp; Acceptance of Terms</h2>
           <p>
-            Welcome to UWannaGoBro ("we," "us," or "our"). By accessing or using our platform at
-            uwannagobro.com (the "Service"), you agree to be bound by these Terms of Service.
+            Welcome to RallyBro ("we," "us," or "our"). By accessing or using our platform at
+            rallybro.com (the "Service"), you agree to be bound by these Terms of Service.
             Please read them carefully. If you do not agree to these terms, do not use the Service.
           </p>
           <p>
-            UWannaGoBro is a community platform that connects sports fans who have extra tickets
+            RallyBro is a community platform that connects sports fans who have extra tickets
             ("Listers") with fans who would like to attend events ("Seekers"). No money changes
             hands through our platform for tickets.
           </p>
@@ -27,7 +27,7 @@ export default function Terms() {
 
         <section aria-labelledby="tos-2">
           <h2 id="tos-2">2. Eligibility</h2>
-          <p>To use UWannaGoBro, you must:</p>
+          <p>To use RallyBro, you must:</p>
           <ul>
             <li>Be at least <strong>18 years of age</strong>. We verify your date of birth at signup.</li>
             <li>Have only <strong>one account</strong>. Creating multiple accounts is prohibited.</li>
@@ -48,7 +48,7 @@ export default function Terms() {
           <p>
             You are responsible for maintaining the confidentiality of your password and for all
             activity that occurs under your account. Notify us immediately at
-            partnerships@uwannagobro.com if you suspect unauthorized access.
+            partnerships@rallybro.com if you suspect unauthorized access.
           </p>
         </section>
 
@@ -99,7 +99,7 @@ export default function Terms() {
         <section aria-labelledby="tos-7">
           <h2 id="tos-7">7. Limitation of Liability</h2>
           <p>
-            UWannaGoBro is a platform that facilitates connections between users. We do not sell,
+            RallyBro is a platform that facilitates connections between users. We do not sell,
             broker, or guarantee any tickets. We are not responsible for:
           </p>
           <ul>
@@ -108,7 +108,7 @@ export default function Terms() {
             <li>Any loss, injury, or damage arising from use of the Service.</li>
           </ul>
           <p>
-            To the fullest extent permitted by law, UWannaGoBro's liability is limited to the amount
+            To the fullest extent permitted by law, RallyBro's liability is limited to the amount
             you paid to use the Service (which is zero for most users).
           </p>
         </section>
@@ -135,8 +135,8 @@ export default function Terms() {
           <h2 id="tos-10">10. Contact</h2>
           <p>
             Questions about these Terms? Reach us at{' '}
-            <a href="mailto:partnerships@uwannagobro.com" className="legal-link">
-              partnerships@uwannagobro.com
+            <a href="mailto:partnerships@rallybro.com" className="legal-link">
+              partnerships@rallybro.com
             </a>.
           </p>
           <p>

@@ -99,7 +99,7 @@ router.post('/forgot-password', (req, res) => {
     const expires = new Date(Date.now() + 3600000).toISOString(); // 1 hour
     db.prepare('UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?')
       .run(tokenHash, expires, user.id);
-    console.log('Reset link:', `https://uwannagobro.com/reset-password?token=${token}`);
+    console.log('Reset link:', `https://rallybro.com/reset-password?token=${token}`);
   }
 
   // Always return success to prevent email enumeration

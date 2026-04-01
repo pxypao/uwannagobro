@@ -42,8 +42,8 @@ export default function Nav({ openAuth }) {
               ←
             </button>
           )}
-          <Link to="/" className="nav-logo" aria-label="UWannaGoBro home">
-            UWanna<span>GoBro</span>
+          <Link to="/" className="nav-logo" aria-label="RallyBro home">
+            Rally<span>Bro</span>
           </Link>
         </div>
 

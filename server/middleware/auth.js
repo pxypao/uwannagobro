@@ -1,7 +1,12 @@
 const jwt = require('jsonwebtoken');
 
 function requireAuth(req, res, next) {
-  const token = req.cookies?.token;
+  // Support both Authorization header (cross-domain) and cookie (legacy)
+  const authHeader = req.headers.authorization;
+  const token = (authHeader && authHeader.startsWith('Bearer '))
+    ? authHeader.split(' ')[1]
+    : req.cookies?.token;
+
   if (!token) return res.status(401).json({ error: 'Not authenticated' });
 
   try {

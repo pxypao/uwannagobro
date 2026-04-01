@@ -7,8 +7,8 @@ export default function Footer() {
       <div className="site-footer-inner container">
         {/* Left — brand */}
         <div className="footer-brand">
-          <Link to="/" className="footer-logo" aria-label="UWannaGoBro home">
-            UWanna<span>GoBro</span>
+          <Link to="/" className="footer-logo" aria-label="RallyBro home">
+            Rally<span>Bro</span>
           </Link>
           <p className="footer-tagline">Free tickets. Real friends. Game day.</p>
         </div>
@@ -24,7 +24,7 @@ export default function Footer() {
         {/* Right — social */}
         <div className="footer-social" aria-label="Social media links">
           <a
-            href="https://instagram.com/uwannagobro"
+            href="https://instagram.com/rallybro"
             aria-label="Instagram"
             className="footer-social-link"
             rel="noopener noreferrer"
@@ -35,7 +35,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href="https://tiktok.com/@uwannagobro"
+            href="https://tiktok.com/@rallybro"
             aria-label="TikTok"
             className="footer-social-link"
             rel="noopener noreferrer"
@@ -46,7 +46,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href="https://twitter.com/uwannagobro"
+            href="https://twitter.com/rallybro"
             aria-label="Twitter / X"
             className="footer-social-link"
             rel="noopener noreferrer"
@@ -61,7 +61,7 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <div className="container">
-          <p>© 2026 UWannaGoBro. All rights reserved.</p>
+          <p>© 2026 RallyBro. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -84,7 +84,7 @@ export default function Home({ openAuth }) {
       <section className="hero" aria-label="Hero">
         <div className="container">
           <h1 className="hero-headline">
-            Got an <span className="gold">extra ticket?</span><br />Find your bro.
+            Got an <span className="gold">extra ticket?</span><br />Find your rally buddy.
           </h1>
           <div className="hero-tagline-badge" aria-label="Tagline">
             Free tickets. Real friends. Game day.

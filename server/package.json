@@ -1,7 +1,7 @@
 {
-  "name": "uwannagobro-server",
+  "name": "rallybro-server",
   "version": "1.0.0",
-  "description": "UWannaGoBro API server",
+  "description": "RallyBro API server",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

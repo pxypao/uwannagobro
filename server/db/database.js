@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 
 const DB_PATH = process.env.DB_PATH
-  || (process.env.NODE_ENV === 'production' ? '/tmp/uwannagobro.db' : path.join(__dirname, '../../data.db'));
+  || (process.env.NODE_ENV === 'production' ? '/tmp/rallybro.db' : path.join(__dirname, '../../data.db'));
 
 console.log(`[db] Opening database at: ${DB_PATH}`);
 const db = new Database(DB_PATH);

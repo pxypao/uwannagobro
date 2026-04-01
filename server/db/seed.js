@@ -2,7 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../../.env') }
 const db = require('./database');
 
 // Seed a system lister account if it doesn't exist
-const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('seed@uwannagobro.com');
+const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('seed@rallybro.com');
 let listerId;
 
 if (!existing) {
@@ -10,7 +10,7 @@ if (!existing) {
   const hash = bcrypt.hashSync('SeedPass123!', 10);
   const result = db.prepare(`
     INSERT INTO users (first_name, email, phone, password_hash, date_of_birth)
-    VALUES ('Community', 'seed@uwannagobro.com', '5035550000', ?, '1990-01-01')
+    VALUES ('Community', 'seed@rallybro.com', '5035550000', ?, '1990-01-01')
   `).run(hash);
   listerId = result.lastInsertRowid;
   console.log('Created seed user id:', listerId);

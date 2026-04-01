@@ -24,26 +24,18 @@ const sthRoutes      = require('./routes/sth');
 
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:4173',
-  'https://uwannagobro.com',
-  'https://www.uwannagobro.com',
-  'https://uwannagobro.vercel.app',
-  process.env.CLIENT_URL,
-].filter(Boolean);
-
-// In dev, also allow any local network IP (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
-const LOCAL_NET = /^http:\/\/(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/;
-
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // curl, mobile apps without origin
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    if (process.env.NODE_ENV !== 'production' && LOCAL_NET.test(origin)) return cb(null, true);
-    cb(new Error('CORS: origin not allowed'));
-  },
+  origin: [
+    'https://rallybro.com',
+    'https://www.rallybro.com',
+    'https://rallybro.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:4173',
+    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+  ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
@@ -125,4 +117,4 @@ setTimeout(() => {
 }, 60 * 1000);
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`UWannaGoBro API running on port ${PORT}`));
+app.listen(PORT, () => console.log(`RallyBro API running on port ${PORT}`));

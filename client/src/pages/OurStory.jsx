@@ -45,7 +45,7 @@ export default function OurStory({ openAuth }) {
           <div className="story-eyebrow">The Idea</div>
           <h2 className="story-heading">What if unused tickets became connections?</h2>
           <p className="story-body">
-            UWannaGoBro started with a simple question — what if the fan who can't make it could give another
+            RallyBro started with a simple question — what if the fan who can't make it could give another
             fan the experience of a lifetime? No scalping. No resale. No profit. Just two sports fans going
             to a game together.
           </p>
@@ -82,13 +82,13 @@ export default function OurStory({ openAuth }) {
           <div className="story-eyebrow">Where We're From</div>
           <h2 className="story-heading">Rooted in Portland sports culture</h2>
           <p className="story-body">
-            We built UWannaGoBro in Portland, Oregon — home of the Timbers Army, Rip City, and some of the
+            We built RallyBro in Portland, Oregon — home of the Timbers Army, Rip City, and some of the
             most passionate sports fans in the country. The culture here is different. Fans don't just watch
             games, they live them. They share scarves, chants, and postgame beers with strangers who
             become friends.
           </p>
           <p className="story-body">
-            That spirit — of community, of generosity, of showing up for each other — is what UWannaGoBro
+            That spirit — of community, of generosity, of showing up for each other — is what RallyBro
             is built on. We started here, but the idea belongs to every city, every stadium, every fan
             who's ever wished they had someone to go to a game with.
           </p>
