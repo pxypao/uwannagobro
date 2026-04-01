@@ -77,8 +77,10 @@ app.use('/api/profile',  profileRoutes);
 app.use('/api/sth',      sthRoutes);
 app.use('/api/admin',    sthRoutes);
 
-// Health check
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
+// Health checks — root and /api prefix both work
+app.get('/',            (_req, res) => res.json({ ok: true }));
+app.get('/health',      (_req, res) => res.json({ ok: true }));
+app.get('/api/health',  (_req, res) => res.json({ ok: true }));
 
 // Generic error handler
 app.use((err, _req, res, _next) => {
@@ -167,6 +169,11 @@ function keepAlive() {
 }
 
 async function start() {
+  const PORT = process.env.PORT || 3001;
+
+  // Listen first — server is always reachable even if DB init is slow or fails
+  app.listen(PORT, () => console.log(`RallyBro API running on port ${PORT}`));
+
   try {
     await db.initDb();
     console.log('[startup] DB initialized');
@@ -175,26 +182,22 @@ async function start() {
     await seed();
     console.log('[startup] Seed completed');
   } catch (err) {
-    console.error('[startup] Init failed:', err.message);
-    process.exit(1);
+    console.error('[startup] DB init failed (routes still active):', err.message);
+    // Don't exit — keep the server running so health checks pass
+    return;
   }
 
-  const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`RallyBro API running on port ${PORT}`);
+  // 1-minute initial delay, then every 60 minutes
+  setTimeout(() => {
+    runAutoCancel();
+    setInterval(runAutoCancel, 60 * 60 * 1000);
+  }, 60 * 1000);
 
-    // 1-minute initial delay, then every 60 minutes
-    setTimeout(() => {
-      runAutoCancel();
-      setInterval(runAutoCancel, 60 * 60 * 1000);
-    }, 60 * 1000);
-
-    // Keep-alive starts after 1 minute, then every 14 minutes
-    setTimeout(() => {
-      keepAlive();
-      setInterval(keepAlive, 14 * 60 * 1000);
-    }, 60 * 1000);
-  });
+  // Keep-alive starts after 1 minute, then every 14 minutes
+  setTimeout(() => {
+    keepAlive();
+    setInterval(keepAlive, 14 * 60 * 1000);
+  }, 60 * 1000);
 }
 
 start();
