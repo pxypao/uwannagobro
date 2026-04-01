@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './context/AuthContext';
 import Nav from './components/Nav';
 import BottomNav from './components/BottomNav';
@@ -20,6 +21,7 @@ export default function App() {
   const location = useLocation();
 
   return (
+    <HelmetProvider>
     <AuthProvider>
       <Nav openAuth={setAuthModal} />
       <div className="page-wrapper">
@@ -45,5 +47,6 @@ export default function App() {
         />
       )}
     </AuthProvider>
+    </HelmetProvider>
   );
 }

@@ -1,9 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 export default function Terms() {
+  const title = 'Terms of Service - RallyBro';
+  const description = "Read RallyBro's terms of service covering eligibility, ticket listings, prohibited conduct, and cancellation policies.";
+
   return (
     <main className="legal-page container" id="main-content">
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://rallybro.com/terms" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rallybro.com/og-image.png" />
+      </Helmet>
       <div className="legal-header">
         <h1>Terms of Service</h1>
         <p className="legal-updated">Last updated: March 2026</p>

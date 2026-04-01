@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../context/AuthContext';
 
 const LISTER_STEPS = [
@@ -29,8 +30,20 @@ const TRUST_ITEMS = [
 export default function HowItWorks({ openAuth }) {
   const { user } = useAuth();
 
+  const title = 'How RallyBro Works - Free Ticket Sharing for Sports Fans';
+  const description = 'Learn how RallyBro connects ticket holders with fans who want to attend games for free. Safe, verified, and community-first.';
+
   return (
     <main id="main-content">
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://rallybro.com/how-it-works" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rallybro.com/og-image.png" />
+      </Helmet>
       {/* ─── Hero ─── */}
       <section className="hiw-hero" aria-label="How it works hero">
         <div className="container">

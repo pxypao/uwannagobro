@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
 import { apiFetch } from '../lib/api';
@@ -78,8 +79,30 @@ export default function Home({ openAuth }) {
     setZip(zipInput.trim());
   }
 
+  const title = 'RallyBro - Free Sports Tickets. Real Fans. Game Day.';
+  const description = 'RallyBro connects sports fans with extra tickets to fans who want to attend games for free. List your ticket or claim one near you. Portland, OR.';
+
   return (
     <>
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://rallybro.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rallybro.com/og-image.png" />
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: 'RallyBro',
+          url: 'https://rallybro.com',
+          description: 'Free sports ticket sharing platform connecting fans with extra tickets to fans who want to attend games.',
+          applicationCategory: 'SportsApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        })}</script>
+      </Helmet>
       {/* ─── Hero ─── */}
       <section className="hero" aria-label="Hero">
         <div className="container">

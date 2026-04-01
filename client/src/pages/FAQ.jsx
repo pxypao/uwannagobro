@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const SECTIONS = [
   {
@@ -120,8 +121,20 @@ function FAQItem({ q, a }) {
 }
 
 export default function FAQ() {
+  const title = 'FAQ - RallyBro Frequently Asked Questions';
+  const description = 'Got questions about RallyBro? Find answers about claiming tickets, listing extras, safety, and more.';
+
   return (
     <main className="faq-page container" id="main-content">
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://rallybro.com/faq" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rallybro.com/og-image.png" />
+      </Helmet>
       <div className="legal-header">
         <h1>Frequently Asked Questions</h1>
         <p className="legal-updated">Can't find what you're looking for? Email us at <a href="mailto:partnerships@rallybro.com" className="legal-link">partnerships@rallybro.com</a></p>

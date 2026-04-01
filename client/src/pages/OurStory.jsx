@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../context/AuthContext';
 
 const VALUES = [
@@ -12,8 +13,20 @@ const VALUES = [
 export default function OurStory({ openAuth }) {
   const { user } = useAuth();
 
+  const title = 'Our Story - RallyBro Born in Portland';
+  const description = 'RallyBro was built in Portland to solve a simple problem: empty seats and fans who want to be there. Learn our story.';
+
   return (
     <main id="main-content">
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://rallybro.com/our-story" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rallybro.com/og-image.png" />
+      </Helmet>
       {/* ─── Hero ─── */}
       <section className="hiw-hero" aria-label="Our story hero">
         <div className="container">
