@@ -6,23 +6,32 @@ const https = require('https');
 const helmet = require('helmet');
 const db = require('./db/database');
 
+const allowedOrigins = [
+  'https://rallybro.com',
+  'https://www.rallybro.com',
+  'https://rallybro.vercel.app',
+  'https://uwannagobro.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
 const corsOptions = {
-  origin: [
-    'https://rallybro.com',
-    'https://www.rallybro.com',
-    'https://rallybro.vercel.app',
-    'https://uwannagobro.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000',
-  ],
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200,
 };
 
 const app = express();
 
-// Security headers
+// Security headers — CORP/COOP disabled so they don't interfere with CORS
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -31,14 +40,14 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://rallybro-api.onrender.com", "https://rallybro.com"],
+      connectSrc: ["'self'", "https://uwannagobro.onrender.com", "https://rallybro.com"],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
   },
-  crossOriginOpenerPolicy: { policy: "same-origin" },
-  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false,
   referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   xFrameOptions: { action: "deny" },
   hsts: {
@@ -48,7 +57,7 @@ app.use(helmet({
   },
 }));
 
-// BUG 1: explicit preflight handler — must be before any other routes
+// CORS — preflight handler must come before all routes
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
@@ -81,6 +90,7 @@ app.use('/api/admin',    sthRoutes);
 app.get('/',            (_req, res) => res.json({ ok: true }));
 app.get('/health',      (_req, res) => res.json({ ok: true }));
 app.get('/api/health',  (_req, res) => res.json({ ok: true }));
+app.get('/cors-test',   (req, res)  => res.json({ cors: 'working', origin: req.headers.origin }));
 
 // Generic error handler
 app.use((err, _req, res, _next) => {
