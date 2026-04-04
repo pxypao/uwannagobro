@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import STHBadge from './STHBadge';
 import { apiFetch } from '../lib/api';
 
 function initials(name) {
@@ -81,9 +80,6 @@ export default function HostProfileModal({ listerId, listerName, onClose, ticket
                   {profile.good_host && (
                     <span className="badge-good-host">Good Host</span>
                   )}
-                  {profile.is_verified_sth ? (
-                    <STHBadge team={profile.sth_team} size="md" />
-                  ) : null}
                 </div>
               </div>
             </div>

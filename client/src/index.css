@@ -150,19 +150,6 @@ input, select, textarea {
 .host-profile-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .host-profile-value { font-size: 0.9rem; font-weight: 500; }
 
-/* ─── Season Ticket Holder Badge ─── */
-.sth-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  background: #e8f0fb;
-  color: #1e6bb8;
-  border: 1.5px solid #93bbee;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
 
 /* ─── Tier Badges ─── */
 .tier-badge {

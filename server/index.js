@@ -73,8 +73,6 @@ const messageRoutes  = require('./routes/messages');
 const { router: ratingRoutes } = require('./routes/ratings');
 const usersRoutes    = require('./routes/users');
 const profileRoutes  = require('./routes/profile');
-const sthRoutes      = require('./routes/sth');
-
 app.use('/api/auth',     authRoutes);
 app.use('/api/tickets',  ticketRoutes);
 app.use('/api/claims',   claimRoutes);
@@ -83,8 +81,6 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/ratings',  ratingRoutes);
 app.use('/api/users',    usersRoutes);
 app.use('/api/profile',  profileRoutes);
-app.use('/api/sth',      sthRoutes);
-app.use('/api/admin',    sthRoutes);
 
 // Health checks — root and /api prefix both work
 app.get('/',            (_req, res) => res.json({ ok: true }));

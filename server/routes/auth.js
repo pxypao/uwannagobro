@@ -76,7 +76,7 @@ router.post('/logout', (req, res) => {
 // GET /api/auth/me
 router.get('/me', requireAuth, async (req, res) => {
   const userRes = await db.query(
-    `SELECT id, first_name, email, is_verified_sth, sth_verification_submitted, sth_team
+    `SELECT id, first_name, email
      FROM users WHERE id = $1`,
     [req.user.id]
   );

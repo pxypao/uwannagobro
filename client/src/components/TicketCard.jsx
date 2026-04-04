@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import STHBadge from './STHBadge';
 import HostProfileModal from './HostProfileModal';
 
 function initials(name) {
@@ -65,9 +64,6 @@ export default function TicketCard({ ticket, onClaim, claimDisabled, user }) {
                 {ticket.lister_good_host && (
                   <span className="badge-good-host" aria-label="Good Host">Good Host</span>
                 )}
-                {ticket.lister_is_verified_sth ? (
-                  <STHBadge team={ticket.lister_sth_team} size="sm" />
-                ) : null}
               </div>
             </div>
           </button>

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import RatingModal from '../components/RatingModal';
-import STHBadge from '../components/STHBadge';
-import STHVerifyModal from '../components/STHVerifyModal';
 import { apiFetch } from '../lib/api';
 
 function formatDate(dateStr) {
@@ -34,7 +32,6 @@ export default function MyTickets() {
   const [pendingRating, setPendingRating] = useState(null); // { claim_id, lister_name }
   const [tierProgress, setTierProgress] = useState(null);
   const [listingCount, setListingCount] = useState(0);
-  const [sthModal, setSthModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
@@ -157,21 +154,6 @@ export default function MyTickets() {
           </p>
         )}
 
-        {/* STH badge / verify button */}
-        <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          {user?.is_verified_sth ? (
-            <STHBadge team={user.sth_team} size="md" />
-          ) : (
-            <button
-              className="btn btn-sm"
-              style={{ color: '#1e6bb8', borderColor: '#1e6bb8', background: 'transparent' }}
-              onClick={() => setSthModal(true)}
-              aria-label="Apply for Season Ticket Holder verification"
-            >
-              {user?.sth_verification_submitted ? '🕐 Verification Pending' : '✓ Verify Season Tickets'}
-            </button>
-          )}
-        </div>
       </div>
 
       {error && (
@@ -238,15 +220,6 @@ export default function MyTickets() {
           </div>
         )}
       </section>
-
-      {/* ─── STH Verify Modal ─── */}
-      {sthModal && (
-        <STHVerifyModal
-          user={user}
-          onClose={() => setSthModal(false)}
-          onSubmitted={() => { setSthModal(false); refetch(); }}
-        />
-      )}
 
       {/* ─── Rating Modal ─── */}
       {pendingRating && (

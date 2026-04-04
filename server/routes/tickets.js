@@ -10,9 +10,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const { zip, sport } = req.query;
   let query = `
-    SELECT t.*, u.first_name AS lister_name,
-           u.is_verified_sth AS lister_is_verified_sth,
-           u.sth_team        AS lister_sth_team
+    SELECT t.*, u.first_name AS lister_name
     FROM tickets t
     JOIN users u ON u.id = t.lister_id
     WHERE t.status = 'open'

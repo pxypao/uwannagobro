@@ -8,8 +8,7 @@ const router = express.Router();
 // GET /api/users/:id/profile — public profile of any user
 router.get('/:id/profile', async (req, res) => {
   const userRes = await db.query(`
-    SELECT id, first_name, favorite_team, sports_interests, fan_since_year, bio,
-           is_verified_sth, sth_team
+    SELECT id, first_name, favorite_team, sports_interests, fan_since_year, bio
     FROM users WHERE id = $1
   `, [req.params.id]);
   const user = userRes.rows[0];

@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import STHBadge from './STHBadge';
 import EditProfileModal from './EditProfileModal';
-import STHVerifyModal from './STHVerifyModal';
 
 function initials(name) {
   if (!name) return '?';
@@ -16,7 +14,6 @@ export default function Nav({ openAuth }) {
   const navigate = useNavigate();
   const [dropOpen, setDropOpen] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
-  const [sthModal, setSthModal] = useState(false);
   const dropRef = useRef(null);
   const isHome = location.pathname === '/';
 
@@ -80,11 +77,6 @@ export default function Nav({ openAuth }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                         <span className="profile-dropdown-name">{user.first_name}</span>
                       </div>
-                      {user.is_verified_sth ? (
-                        <div style={{ marginTop: '0.3rem' }}>
-                          <STHBadge team={user.sth_team} size="sm" />
-                        </div>
-                      ) : null}
                       <div className="profile-dropdown-email" style={{ marginTop: '0.2rem' }}>{user.email}</div>
                     </div>
                     <button
@@ -95,16 +87,6 @@ export default function Nav({ openAuth }) {
                     >
                       Edit Profile
                     </button>
-                    {!user.is_verified_sth && (
-                      <button
-                        className="profile-dropdown-btn"
-                        role="menuitem"
-                        style={{ color: '#1e6bb8' }}
-                        onClick={() => { setDropOpen(false); setSthModal(true); }}
-                      >
-                        {user.sth_verification_submitted ? '🕐 Verification Pending' : '✓ Verify Season Tickets'}
-                      </button>
-                    )}
                     <button
                       className="profile-dropdown-btn"
                       role="menuitem"
@@ -132,13 +114,6 @@ export default function Nav({ openAuth }) {
         <EditProfileModal
           onClose={() => setEditProfile(false)}
           onSaved={() => refetch()}
-        />
-      )}
-      {sthModal && (
-        <STHVerifyModal
-          user={user}
-          onClose={() => setSthModal(false)}
-          onSubmitted={() => refetch()}
         />
       )}
     </nav>
