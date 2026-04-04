@@ -7,6 +7,7 @@ import Nav from './components/Nav';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import DevGate from './components/DevGate';
 import Home from './pages/Home';
 import ListTicket from './pages/ListTicket';
 import Messages from './pages/Messages';
@@ -23,6 +24,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
+    <DevGate>
     <AuthProvider>
       <Nav openAuth={setAuthModal} />
       <div className="page-wrapper">
@@ -48,6 +50,7 @@ export default function App() {
         />
       )}
     </AuthProvider>
+    </DevGate>
     <Analytics />
     </HelmetProvider>
   );
