@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../lib/api';
@@ -13,6 +13,84 @@ const EMPTY = {
   preferred_age_range: 'Any', fan_level: 'Either', notes_to_seeker: '',
 };
 
+// ── Portland sports game database ──
+const GAME_DB = [
+  // Portland Timbers (MLS Soccer) — Providence Park
+  { title: 'Portland Timbers vs Seattle Sounders', sport: 'Soccer', date: '2026-04-12', time: '19:30', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs LA Galaxy', sport: 'Soccer', date: '2026-04-19', time: '18:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs LAFC', sport: 'Soccer', date: '2026-04-26', time: '20:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs San Jose Earthquakes', sport: 'Soccer', date: '2026-05-03', time: '19:30', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Vancouver Whitecaps', sport: 'Soccer', date: '2026-05-17', time: '19:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Colorado Rapids', sport: 'Soccer', date: '2026-05-24', time: '18:30', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Real Salt Lake', sport: 'Soccer', date: '2026-06-07', time: '19:30', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Minnesota United', sport: 'Soccer', date: '2026-06-21', time: '19:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Sporting KC', sport: 'Soccer', date: '2026-07-05', time: '19:30', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs FC Dallas', sport: 'Soccer', date: '2026-07-19', time: '18:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Austin FC', sport: 'Soccer', date: '2026-08-02', time: '19:00', venue: 'Providence Park', zip: '97201' },
+  { title: 'Portland Timbers vs Houston Dynamo', sport: 'Soccer', date: '2026-08-16', time: '18:30', venue: 'Providence Park', zip: '97201' },
+
+  // Portland Trail Blazers (NBA Basketball) — Moda Center
+  { title: 'Portland Trail Blazers vs Golden State Warriors', sport: 'Basketball', date: '2026-04-05', time: '19:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Los Angeles Lakers', sport: 'Basketball', date: '2026-04-09', time: '20:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Sacramento Kings', sport: 'Basketball', date: '2026-04-13', time: '19:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Phoenix Suns', sport: 'Basketball', date: '2026-10-22', time: '19:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Utah Jazz', sport: 'Basketball', date: '2026-10-29', time: '19:30', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Denver Nuggets', sport: 'Basketball', date: '2026-11-07', time: '19:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Dallas Mavericks', sport: 'Basketball', date: '2026-11-14', time: '19:00', venue: 'Moda Center', zip: '97227' },
+  { title: 'Portland Trail Blazers vs Memphis Grizzlies', sport: 'Basketball', date: '2026-11-21', time: '19:00', venue: 'Moda Center', zip: '97227' },
+
+  // Portland Pickles (Collegiate Baseball) — Walker Stadium
+  { title: 'Portland Pickles vs Corvallis Knights', sport: 'Baseball', date: '2026-06-05', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Bend Elks', sport: 'Baseball', date: '2026-06-10', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Cowlitz Black Bears', sport: 'Baseball', date: '2026-06-17', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Bellingham Bells', sport: 'Baseball', date: '2026-06-24', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Victoria HarbourCats', sport: 'Baseball', date: '2026-07-01', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Kelowna Falcons', sport: 'Baseball', date: '2026-07-10', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Medford Rogues', sport: 'Baseball', date: '2026-07-18', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Walla Walla Sweets', sport: 'Baseball', date: '2026-07-25', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+  { title: 'Portland Pickles vs Port Angeles Lefties', sport: 'Baseball', date: '2026-08-01', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+];
+
+const SEARCH_ALIASES = {
+  'timbers': 'Portland Timbers',
+  'blazers': 'Trail Blazers',
+  'trailblazers': 'Trail Blazers',
+  'pickles': 'Portland Pickles',
+  'por': 'Portland',
+  'pdx': 'Portland',
+  'moda': 'Moda Center',
+  'providence': 'Providence Park',
+  'walker': 'Walker Stadium',
+};
+
+function searchGames(query) {
+  if (!query || query.length < 2) return [];
+  const normalized = query.toLowerCase().trim();
+  // Expand aliases
+  const expanded = Object.keys(SEARCH_ALIASES).reduce((q, alias) => {
+    if (normalized.startsWith(alias) || normalized.includes(alias)) {
+      return SEARCH_ALIASES[alias].toLowerCase();
+    }
+    return q;
+  }, normalized);
+
+  const today = new Date().toISOString().split('T')[0];
+  return GAME_DB.filter(game => {
+    if (game.date < today) return false;
+    return (
+      game.title.toLowerCase().includes(normalized) ||
+      game.title.toLowerCase().includes(expanded) ||
+      game.venue.toLowerCase().includes(normalized) ||
+      game.sport.toLowerCase().includes(normalized)
+    );
+  }).slice(0, 6);
+}
+
+function formatSuggestionDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 export default function ListTicket({ openAuth }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -21,6 +99,11 @@ export default function ListTicket({ openAuth }) {
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [autoFilled, setAutoFilled] = useState(false);
+  const titleRef = useRef(null);
+  const suggestionsRef = useRef(null);
 
   // If not logged in, show auth modal and redirect home
   useEffect(() => {
@@ -33,6 +116,49 @@ export default function ListTicket({ openAuth }) {
   function set(k) {
     return (e) => setForm(f => ({ ...f, [k]: e.target.value }));
   }
+
+  function handleTitleChange(e) {
+    const val = e.target.value;
+    setForm(f => ({ ...f, title: val }));
+    setAutoFilled(false);
+    if (val.length >= 2) {
+      const results = searchGames(val);
+      setSuggestions(results);
+      setShowSuggestions(results.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }
+
+  function selectGame(game) {
+    setForm(f => ({
+      ...f,
+      title: game.title,
+      sport: game.sport,
+      date: game.date,
+      time: game.time,
+      venue: game.venue,
+      zip: game.zip,
+    }));
+    setShowSuggestions(false);
+    setSuggestions([]);
+    setAutoFilled(true);
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        titleRef.current && !titleRef.current.contains(e.target) &&
+        suggestionsRef.current && !suggestionsRef.current.contains(e.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -97,17 +223,53 @@ export default function ListTicket({ openAuth }) {
       )}
 
       <form className="list-form" onSubmit={handleSubmit} noValidate>
-        <div className="form-group">
+        <div className="form-group" style={{ position: 'relative' }}>
           <label htmlFor="lt-title">Event Name</label>
           <input
             id="lt-title"
-            className="form-control"
+            ref={titleRef}
+            className={`form-control${autoFilled ? ' input-autofilled' : ''}`}
             type="text"
             value={form.title}
-            onChange={set('title')}
+            onChange={handleTitleChange}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             required
-            placeholder="e.g. Trail Blazers vs Lakers"
+            placeholder="e.g. Timbers, Blazers, Pickles…"
+            autoComplete="off"
+            aria-autocomplete="list"
+            aria-controls="game-suggestions"
+            aria-expanded={showSuggestions}
           />
+          {autoFilled && (
+            <div className="autofill-badge" aria-live="polite">
+              Details auto-filled — review and adjust if needed
+            </div>
+          )}
+          {showSuggestions && suggestions.length > 0 && (
+            <ul
+              id="game-suggestions"
+              ref={suggestionsRef}
+              className="game-suggestions"
+              role="listbox"
+              aria-label="Game suggestions"
+            >
+              {suggestions.map((game, i) => (
+                <li
+                  key={i}
+                  role="option"
+                  className="game-suggestion-item"
+                  onMouseDown={() => selectGame(game)}
+                >
+                  <div className="game-suggestion-title">{game.title}</div>
+                  <div className="game-suggestion-meta">
+                    <span className="game-suggestion-sport">{game.sport}</span>
+                    <span>{formatSuggestionDate(game.date)}</span>
+                    <span>{game.venue}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="form-group">

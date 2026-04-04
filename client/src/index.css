@@ -1165,3 +1165,207 @@ input, select, textarea {
   padding: 0 1.1rem 1rem;
 }
 .faq-answer p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ─── Auth Gate Animation ─── */
+.modal-gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 20;
+  pointer-events: none;
+}
+.modal-gate-panel {
+  flex: 1;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.65s cubic-bezier(0.77, 0, 0.18, 1), opacity 0.2s ease 0.55s;
+  opacity: 1;
+}
+.modal-gate-panel.open {
+  opacity: 0;
+}
+.modal-gate-left {
+  transform: translateX(0);
+  border-right: 1px solid var(--green-dark);
+}
+.modal-gate-left.open {
+  transform: translateX(-105%);
+}
+.modal-gate-right {
+  transform: translateX(0);
+}
+.modal-gate-right.open {
+  transform: translateX(105%);
+}
+.modal-gate-label {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  user-select: none;
+}
+.modal-gate-seam {
+  width: 2px;
+  background: var(--gold);
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  transition: opacity 0.15s ease 0.5s;
+  opacity: 1;
+  z-index: 21;
+  pointer-events: none;
+}
+
+/* ─── Claim Confirmation Modal ─── */
+.claim-confirm-modal {
+  max-width: 420px;
+}
+.claim-confirm-sport-bar {
+  display: inline-flex;
+  align-items: center;
+  background: var(--green);
+  color: var(--white);
+  border-radius: 4px;
+  padding: 0.2rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.claim-confirm-sport-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.claim-confirm-details {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.claim-confirm-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.claim-confirm-icon {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.claim-confirm-row-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.1rem;
+}
+.claim-confirm-row-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.claim-confirm-note {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #78350f;
+}
+.claim-confirm-note-label {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  color: #92400e;
+}
+.claim-confirm-fine-print {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* ─── Game Autocomplete ─── */
+.game-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  list-style: none;
+  z-index: 100;
+  overflow: hidden;
+}
+.game-suggestion-item {
+  padding: 0.65rem 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.game-suggestion-item:last-child { border-bottom: none; }
+.game-suggestion-item:hover {
+  background: #f0f7f2;
+}
+.game-suggestion-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+.game-suggestion-meta {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.game-suggestion-sport {
+  background: var(--green);
+  color: var(--white);
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.input-autofilled {
+  border-color: var(--green) !important;
+  background: #f0f7f2 !important;
+}
+.autofill-badge {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--green);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.autofill-badge::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
+import ClaimConfirmModal from '../components/ClaimConfirmModal';
 import { apiFetch } from '../lib/api';
 
 const SPORTS = ['All Sports', 'Baseball', 'Soccer', 'Basketball', 'Football', 'Hockey'];
@@ -17,6 +18,9 @@ export default function Home({ openAuth }) {
   const [loading, setLoading] = useState(true);
   const [claimBanner, setClaimBanner] = useState('');
   const [activeClaim, setActiveClaim] = useState(null);
+  const [pendingTicket, setPendingTicket] = useState(null); // ticket awaiting claim confirmation
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [alreadyClaimedModal, setAlreadyClaimedModal] = useState(false);
 
   const fetchTickets = useCallback(async () => {
     setLoading(true);
@@ -45,32 +49,45 @@ export default function Home({ openAuth }) {
 
   useEffect(() => { fetchTickets(); }, [fetchTickets]);
 
-  async function handleClaim(ticketId) {
+  function handleClaim(ticketId) {
     if (!user) { openAuth('signup'); return; }
     if (activeClaim) {
-      setClaimBanner('You already have an active claimed ticket. Once your event date passes, you can claim another!');
+      setAlreadyClaimedModal(true);
       return;
     }
+    // Find the ticket details to show in the confirmation modal
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (ticket) setPendingTicket(ticket);
+  }
+
+  async function confirmClaim() {
+    if (!pendingTicket) return;
+    setClaimLoading(true);
     try {
-      const res = await apiFetch(`/api/tickets/${ticketId}/claim`, {
+      const res = await apiFetch(`/api/tickets/${pendingTicket.id}/claim`, {
         method: 'POST',
       });
       const data = await res.json();
       if (res.status === 403) {
+        setPendingTicket(null);
         setClaimBanner("You can't claim your own ticket. List it for someone else to enjoy!");
         setTimeout(() => setClaimBanner(''), 5000);
         return;
       }
       if (!res.ok) {
+        setPendingTicket(null);
         setClaimBanner(data.error || 'Unable to claim this ticket.');
         return;
       }
-      // Refresh everything
+      setPendingTicket(null);
       setActiveClaim(data.claim);
       fetchTickets();
       navigate('/messages');
     } catch {
+      setPendingTicket(null);
       setClaimBanner('Network error. Please try again.');
+    } finally {
+      setClaimLoading(false);
     }
   }
 
@@ -222,6 +239,52 @@ export default function Home({ openAuth }) {
           </div>
         )}
       </main>
+
+      {/* Claim confirmation modal */}
+      {pendingTicket && (
+        <ClaimConfirmModal
+          ticket={pendingTicket}
+          onConfirm={confirmClaim}
+          onCancel={() => setPendingTicket(null)}
+          loading={claimLoading}
+        />
+      )}
+
+      {/* Already claimed modal */}
+      {alreadyClaimedModal && (
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="You already have an active ticket"
+          onClick={(e) => { if (e.target === e.currentTarget) setAlreadyClaimedModal(false); }}
+        >
+          <div className="modal" style={{ textAlign: 'center', maxWidth: '380px' }}>
+            <button className="modal-close" onClick={() => setAlreadyClaimedModal(false)} aria-label="Close">×</button>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }} aria-hidden="true">🎟</div>
+            <h2 className="modal-title" style={{ fontSize: '1.6rem' }}>You're Already In!</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '0.5rem' }}>
+              RallyBro is one ticket at a time — so everyone gets a fair shot.
+            </p>
+            {activeClaim && (
+              <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '1.25rem' }}>
+                You have an active meet for <span style={{ color: 'var(--green)' }}>{activeClaim.title}</span>.
+              </p>
+            )}
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              Once your event date passes, you'll be free to claim another ticket.
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+              <Link to="/messages" className="btn btn-primary" onClick={() => setAlreadyClaimedModal(false)}>
+                View My Chat
+              </Link>
+              <button className="btn btn-outline" onClick={() => setAlreadyClaimedModal(false)}>
+                Got It
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

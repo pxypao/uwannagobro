@@ -4,6 +4,33 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+// GET /api/claims/:id — fetch claim details (lister or seeker only)
+router.get('/:id', requireAuth, async (req, res) => {
+  const result = await db.query(`
+    SELECT
+      c.id, c.status, c.ticket_id, c.seeker_id,
+      c.transfer_confirmed, c.transfer_deadline, c.response_deadline,
+      t.title, t.date, t.time, t.venue, t.sport, t.lister_id,
+      lister.first_name AS lister_name,
+      seeker.first_name AS seeker_name
+    FROM claims c
+    JOIN tickets t ON t.id = c.ticket_id
+    JOIN users lister ON lister.id = t.lister_id
+    JOIN users seeker ON seeker.id = c.seeker_id
+    WHERE c.id = $1
+  `, [req.params.id]);
+
+  const claim = result.rows[0];
+  if (!claim) return res.status(404).json({ error: 'Claim not found.' });
+
+  // Only lister or seeker can view
+  if (claim.lister_id !== req.user.id && claim.seeker_id !== req.user.id) {
+    return res.status(403).json({ error: 'Not authorized.' });
+  }
+
+  res.json({ claim });
+});
+
 // POST /api/claims/:id/cancel
 router.post('/:id/cancel', requireAuth, async (req, res) => {
   const claimRes = await db.query(`

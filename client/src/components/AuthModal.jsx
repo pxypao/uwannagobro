@@ -2,6 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../lib/api';
 
+function GateAnimation({ onDone }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const t1 = setTimeout(() => setOpen(true), 80);
+    const t2 = setTimeout(() => onDone(), 750);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [onDone]);
+  return (
+    <div className="modal-gate" aria-hidden="true">
+      <div className={`modal-gate-panel modal-gate-left${open ? ' open' : ''}`}>
+        <span className="modal-gate-label">RALLY</span>
+      </div>
+      <div className="modal-gate-seam" />
+      <div className={`modal-gate-panel modal-gate-right${open ? ' open' : ''}`}>
+        <span className="modal-gate-label">BRO</span>
+      </div>
+    </div>
+  );
+}
+
 function calcAge(dob) {
   const birth = new Date(dob);
   const now = new Date();
@@ -21,6 +41,7 @@ export default function AuthModal({ mode, onClose, switchMode }) {
   const [view, setView] = useState('auth'); // 'auth' | 'forgot' | 'forgot-sent'
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [showGate, setShowGate] = useState(true);
   const firstRef = useRef(null);
 
   useEffect(() => {
@@ -186,7 +207,8 @@ export default function AuthModal({ mode, onClose, switchMode }) {
       aria-label={isSignup ? 'Sign up' : 'Log in'}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="modal">
+      <div className="modal" style={{ position: 'relative', overflow: 'hidden' }}>
+        {showGate && <GateAnimation onDone={() => setShowGate(false)} />}
         <button className="modal-close" onClick={onClose} aria-label="Close modal">×</button>
         <h2 className="modal-title">{isSignup ? 'Join the Crew' : 'Welcome Back'}</h2>
 

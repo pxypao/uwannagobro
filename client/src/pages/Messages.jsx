@@ -64,31 +64,52 @@ export default function Messages() {
   const fetchClaim = useCallback(async () => {
     if (!user) return;
     try {
+      // Try seeker side first
       const seekerRes = await apiFetch(`/api/my/claim`);
       if (seekerRes.ok) {
         const data = await seekerRes.json();
         if (data.claim) {
           setClaim(data.claim);
-          setClaimId(data.claim.id);
-          setOtherName(data.claim.lister_name);
-          setEventTitle(data.claim.title);
+          const id = data.claim.id;
+          setClaimId(id);
           setIAmLister(false);
+          // Fetch authoritative claim details to guarantee correct event title
+          const detailRes = await apiFetch(`/api/claims/${id}`);
+          if (detailRes.ok) {
+            const detail = await detailRes.json();
+            setOtherName(detail.claim.lister_name);
+            setEventTitle(detail.claim.title);
+          } else {
+            setOtherName(data.claim.lister_name);
+            setEventTitle(data.claim.title);
+          }
           return;
         }
       }
 
+      // Try lister side — find the most recently claimed active ticket
       const myRes = await apiFetch(`/api/my/tickets`);
       if (myRes.ok) {
         const data = await myRes.json();
-        const claimed = data.tickets.find(t => t.status === 'claimed' && t.claim_id);
+        const claimedTickets = data.tickets.filter(t => t.status === 'claimed' && t.claim_id);
+        const claimed = claimedTickets[0]; // most recent first from server
         if (claimed) {
           setClaim(claimed);
-          setClaimId(claimed.claim_id);
-          setOtherName(claimed.seeker_name || 'Fan');
-          setEventTitle(claimed.title);
+          const id = claimed.claim_id;
+          setClaimId(id);
           setIAmLister(true);
           if (claimed.seeker_fan_level || claimed.seeker_age_range) {
             setSeekerInfo({ fan_level: claimed.seeker_fan_level, age_range: claimed.seeker_age_range });
+          }
+          // Fetch authoritative claim details to guarantee correct event title
+          const detailRes = await apiFetch(`/api/claims/${id}`);
+          if (detailRes.ok) {
+            const detail = await detailRes.json();
+            setOtherName(detail.claim.seeker_name || 'Fan');
+            setEventTitle(detail.claim.title);
+          } else {
+            setOtherName(claimed.seeker_name || 'Fan');
+            setEventTitle(claimed.title);
           }
           return;
         }
