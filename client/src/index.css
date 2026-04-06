@@ -933,7 +933,10 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .messages-page {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - var(--nav-h));
+  height: calc(100dvh - var(--nav-h) - var(--bottom-nav-h));
+}
+@media (min-width: 768px) {
+  .messages-page { height: calc(100dvh - var(--nav-h)); }
 }
 .messages-header {
   background: var(--green);

@@ -113,32 +113,24 @@ function TicketEventPoller() {
 function AppInner() {
   const [authModal, setAuthModal] = useState(null);
   const location = useLocation();
-  const isMessages = location.pathname === '/messages';
-
   return (
     <>
       <TicketEventPoller />
       <Nav openAuth={setAuthModal} />
-      {isMessages ? (
-        // Messages is a full-screen chat — no page-wrapper, no footer
-        <div style={{ paddingTop: 'var(--nav-h)' }}>
-          <Messages />
-        </div>
-      ) : (
-        <div className="page-wrapper">
-          <Routes>
-            <Route path="/"                element={<Home openAuth={setAuthModal} />} />
-            <Route path="/list"            element={<ListTicket openAuth={setAuthModal} />} />
-            <Route path="/my-tickets"      element={<MyTickets />} />
-            <Route path="/how-it-works"    element={<HowItWorks openAuth={setAuthModal} />} />
-            <Route path="/our-story"       element={<OurStory openAuth={setAuthModal} />} />
-            <Route path="/terms"           element={<Terms />} />
-            <Route path="/faq"             element={<FAQ />} />
-            <Route path="/reset-password"  element={<ResetPassword />} />
-          </Routes>
-          <Footer />
-        </div>
-      )}
+      <div className="page-wrapper">
+        <Routes>
+          <Route path="/"                element={<Home openAuth={setAuthModal} />} />
+          <Route path="/list"            element={<ListTicket openAuth={setAuthModal} />} />
+          <Route path="/messages"        element={<Messages />} />
+          <Route path="/my-tickets"      element={<MyTickets />} />
+          <Route path="/how-it-works"    element={<HowItWorks openAuth={setAuthModal} />} />
+          <Route path="/our-story"       element={<OurStory openAuth={setAuthModal} />} />
+          <Route path="/terms"           element={<Terms />} />
+          <Route path="/faq"             element={<FAQ />} />
+          <Route path="/reset-password"  element={<ResetPassword />} />
+        </Routes>
+        {location.pathname !== '/messages' && <Footer />}
+      </div>
       <BottomNav />
       <NotificationToast />
       {authModal && (
