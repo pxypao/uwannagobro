@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import { apiFetch } from '../lib/api';
@@ -36,6 +36,10 @@ function MessagesIcon() {
 export default function BottomNav() {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
+  const location = useLocation();
+
+  // Messages page has its own full-screen input bar — hide bottom nav there
+  if (location.pathname === '/messages') return null;
   const [unread, setUnread] = useState(0);
   const prevUnreadRef = useRef(null); // null = not yet initialised
 
