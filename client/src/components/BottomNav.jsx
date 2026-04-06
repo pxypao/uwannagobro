@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import { apiFetch } from '../lib/api';
 
 function BrowseIcon() {
@@ -34,10 +35,12 @@ function MessagesIcon() {
 
 export default function BottomNav() {
   const { user } = useAuth();
+  const { addNotification } = useNotifications();
   const [unread, setUnread] = useState(0);
+  const prevUnreadRef = useRef(null); // null = not yet initialised
 
   useEffect(() => {
-    if (!user) { setUnread(0); return; }
+    if (!user) { setUnread(0); prevUnreadRef.current = null; return; }
     let active = true;
 
     async function poll() {
@@ -45,7 +48,19 @@ export default function BottomNav() {
         const res = await apiFetch(`/api/messages/unread/count`);
         if (res.ok) {
           const data = await res.json();
-          if (active) setUnread(data.count);
+          const count = data.count;
+          if (active) {
+            setUnread(count);
+            // Fire notification only when count genuinely increases
+            if (prevUnreadRef.current !== null && count > prevUnreadRef.current) {
+              addNotification({
+                type: 'message',
+                title: 'New Message',
+                message: `You have ${count} unread message${count !== 1 ? 's' : ''}`,
+              });
+            }
+            prevUnreadRef.current = count;
+          }
         }
       } catch {}
     }
@@ -53,7 +68,7 @@ export default function BottomNav() {
     poll();
     const id = setInterval(poll, 5000);
     return () => { active = false; clearInterval(id); };
-  }, [user]);
+  }, [user, addNotification]);
 
   return (
     <nav className="bottom-nav" aria-label="Bottom navigation">
