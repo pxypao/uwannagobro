@@ -45,7 +45,7 @@ export default function BottomNav() {
 
     async function poll() {
       try {
-        const res = await apiFetch(`/api/messages/unread/count`);
+        const res = await apiFetch(`/api/messages/unread/detail`);
         if (res.ok) {
           const data = await res.json();
           const count = data.count;
@@ -56,7 +56,9 @@ export default function BottomNav() {
               addNotification({
                 type: 'message',
                 title: 'New Message',
-                message: `You have ${count} unread message${count !== 1 ? 's' : ''}`,
+                message: data.ticket_title
+                  ? `New message about ${data.ticket_title}`
+                  : `You have ${count} unread message${count !== 1 ? 's' : ''}`,
               });
             }
             prevUnreadRef.current = count;

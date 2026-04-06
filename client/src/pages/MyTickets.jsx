@@ -66,6 +66,12 @@ export default function MyTickets() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // Live-poll every 8s so claimed/canceled status updates without a refresh
+  useEffect(() => {
+    const id = setInterval(fetchData, 8000);
+    return () => clearInterval(id);
+  }, [fetchData]);
+
   async function cancelListing(ticketId) {
     if (!window.confirm('Remove this listing from the public feed?')) return;
     setCancelling(ticketId);

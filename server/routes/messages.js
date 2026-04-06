@@ -78,4 +78,38 @@ router.get('/unread/count', requireAuth, async (req, res) => {
   res.json({ count: parseInt(result.rows[0].cnt, 10) });
 });
 
+// GET /api/messages/unread/detail — unread count + ticket title of latest unread conversation
+router.get('/unread/detail', requireAuth, async (req, res) => {
+  const result = await db.query(`
+    SELECT COUNT(*) AS cnt, t.title AS ticket_title
+    FROM messages m
+    JOIN claims c ON c.id = m.claim_id
+    JOIN tickets t ON t.id = c.ticket_id
+    WHERE m.is_read = FALSE
+      AND m.sender_id != $1
+      AND (c.seeker_id = $2 OR t.lister_id = $3)
+    GROUP BY t.title
+    ORDER BY MAX(m.created_at) DESC
+    LIMIT 1
+  `, [req.user.id, req.user.id, req.user.id]);
+
+  if (result.rows.length === 0) return res.json({ count: 0, ticket_title: null });
+
+  // total count across all conversations
+  const total = await db.query(`
+    SELECT COUNT(*) AS cnt
+    FROM messages m
+    JOIN claims c ON c.id = m.claim_id
+    JOIN tickets t ON t.id = c.ticket_id
+    WHERE m.is_read = FALSE
+      AND m.sender_id != $1
+      AND (c.seeker_id = $2 OR t.lister_id = $3)
+  `, [req.user.id, req.user.id, req.user.id]);
+
+  res.json({
+    count: parseInt(total.rows[0].cnt, 10),
+    ticket_title: result.rows[0].ticket_title,
+  });
+});
+
 module.exports = router;

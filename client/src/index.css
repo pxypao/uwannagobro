@@ -1058,6 +1058,46 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 }
 
 /* ══════════════════════════════════════════
+   Claim Confirm Modal — Detail Bubbles
+══════════════════════════════════════════ */
+.claim-detail-bubbles {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.claim-detail-bubble {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.8rem;
+  flex: 1;
+  min-width: 120px;
+}
+.claim-detail-bubble-icon {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.claim-detail-bubble-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.claim-detail-bubble-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+/* ══════════════════════════════════════════
    Game Autocomplete Dropdown
 ══════════════════════════════════════════ */
 .game-suggestions {
