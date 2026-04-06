@@ -123,18 +123,55 @@ export default function Home({ openAuth }) {
       {/* ─── Hero ─── */}
       <section className="hero" aria-label="Hero">
         <div className="container">
-          <h1 className="hero-headline">
-            Got an <span className="gold">extra ticket?</span><br />Find your rally bro.
-          </h1>
-          {/* LED Marquee */}
-          <div className="led-marquee-wrap" aria-label="Tagline">
-            <div className="led-marquee-track">
-              {[0, 1].map(i => (
-                <span key={i} className="led-marquee-text">
-                  FREE TICKETS <span className="led-sep">◆</span> REAL FRIENDS <span className="led-sep">◆</span> GAME DAY <span className="led-sep">◆</span> PORTLAND'S HOME FOR EXTRA TICKETS <span className="led-sep">◆</span> LIST IT. CLAIM IT. RALLY. <span className="led-sep">◆</span>&nbsp;
-                </span>
-              ))}
+          {/* ── Jumbotron Big Screen ── */}
+          <div className="jumbotron" aria-label="Hero display">
+
+            {/* Scoreboard header bar */}
+            <div className="jumbotron-header">
+              <div className="jumbotron-stat">
+                <span className="jumbotron-stat-val">PDX</span>
+                <span className="jumbotron-stat-label">City</span>
+              </div>
+              <div className="jumbotron-divider" />
+              <div className="jumbotron-stat">
+                <span className="jumbotron-stat-val">FREE</span>
+                <span className="jumbotron-stat-label">Always</span>
+              </div>
+              <div className="jumbotron-divider" />
+              <div className="jumbotron-center">
+                <span className="jumbotron-logo-text">Rally<span>Bro</span></span>
+                <span className="jumbotron-tagline">Portland's Ticket Community</span>
+              </div>
+              <div className="jumbotron-divider" />
+              <div className="jumbotron-stat">
+                <span className="jumbotron-stat-val">$0</span>
+                <span className="jumbotron-stat-label">Cost</span>
+              </div>
+              <div className="jumbotron-divider" />
+              <div className="jumbotron-stat">
+                <span className="jumbotron-stat-val">PDX</span>
+                <span className="jumbotron-stat-label">Fans</span>
+              </div>
             </div>
+
+            {/* Main screen */}
+            <div className="jumbotron-screen">
+              <h1 className="hero-headline" aria-label="Got an extra ticket? Find your rally bro.">
+                Got an <span className="gold">extra ticket?</span><br />Find your rally bro.
+              </h1>
+            </div>
+
+            {/* LED ticker strip at bottom */}
+            <div className="led-marquee-wrap" aria-label="Tagline ticker">
+              <div className="led-marquee-track">
+                {[0, 1].map(i => (
+                  <span key={i} className="led-marquee-text">
+                    FREE TICKETS <span className="led-sep">◆</span> REAL FRIENDS <span className="led-sep">◆</span> GAME DAY <span className="led-sep">◆</span> PORTLAND'S HOME FOR EXTRA TICKETS <span className="led-sep">◆</span> LIST IT. CLAIM IT. RALLY. <span className="led-sep">◆</span>&nbsp;
+                  </span>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           <form className="hero-search" onSubmit={handleSearch} aria-label="Search by zip code">

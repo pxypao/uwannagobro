@@ -674,14 +674,167 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 }
 .hero > * { position: relative; }
 
+/* ── Jumbotron Big Screen ── */
+.jumbotron {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 1.8rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d0d0d;
+  box-shadow:
+    0 0 0 4px #1a1a1a,
+    0 0 0 6px #2a2a2a,
+    0 0 40px rgba(0,0,0,0.9),
+    0 8px 32px rgba(0,0,0,0.7);
+  position: relative;
+}
+
+/* outer housing screws / edge detail */
+.jumbotron::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* scoreboard top bar */
+.jumbotron-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, #0f2d18 0%, #0a1f10 100%);
+  border-bottom: 2px solid #f0a500;
+  padding: 0.5rem 1.2rem;
+  gap: 1rem;
+}
+
+.jumbotron-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+.jumbotron-stat-val {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #f0a500;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(240,165,0,0.5);
+}
+.jumbotron-stat-label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.jumbotron-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.jumbotron-logo-text {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+  line-height: 1;
+}
+.jumbotron-logo-text span { color: #f0a500; }
+.jumbotron-tagline {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* divider lines in header */
+.jumbotron-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+
+/* main screen area */
+.jumbotron-screen {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(26,107,60,0.18) 0%, transparent 70%),
+    linear-gradient(180deg, #050e07 0%, #080f09 100%);
+  padding: 2.2rem 1.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle scanline on screen */
+.jumbotron-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* screen vignette */
+.jumbotron-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.jumbotron-screen > * { position: relative; z-index: 2; }
+
+/* headline ON the screen */
 .hero-headline {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 8vw, 4.75rem);
-  line-height: 1.02;
+  font-size: clamp(2rem, 7vw, 4rem);
+  line-height: 1.05;
   letter-spacing: 0.03em;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0;
+  color: #ffffff;
+  text-shadow:
+    0 0 20px rgba(46,204,113,0.3),
+    0 2px 4px rgba(0,0,0,0.8);
 }
-.hero-headline .gold { color: var(--gold); }
+.hero-headline .gold {
+  color: #f0a500;
+  text-shadow:
+    0 0 16px rgba(240,165,0,0.5),
+    0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* LED marquee is now the bottom ticker of the jumbotron */
+.jumbotron .led-marquee-wrap {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-top: 2px solid #1a3d22;
+  box-shadow: none;
+  padding: 8px 0;
+}
 
 /* ── LED Marquee ── */
 .led-marquee-wrap {
