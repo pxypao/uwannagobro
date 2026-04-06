@@ -241,7 +241,6 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .card:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--green);
-  transform: translateY(-2px);
 }
 
 /* ══════════════════════════════════════════
