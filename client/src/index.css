@@ -1059,6 +1059,62 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 }
 
 /* ══════════════════════════════════════════
+   Game Autocomplete Dropdown
+══════════════════════════════════════════ */
+.game-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  list-style: none;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.game-suggestion-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--t-fast);
+}
+.game-suggestion-item:last-child { border-bottom: none; }
+.game-suggestion-item:hover,
+.game-suggestion-item:focus { background: var(--green-subtle); outline: none; }
+.game-suggestion-item:focus { box-shadow: inset 0 0 0 2px var(--green); }
+
+.game-suggestion-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+.game-suggestion-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.game-suggestion-sport {
+  background: var(--green-light);
+  color: var(--green);
+  border-radius: var(--radius-full);
+  padding: 0.05rem 0.5rem;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════
    List Ticket Page
 ══════════════════════════════════════════ */
 .list-page {
