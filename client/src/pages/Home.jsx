@@ -126,8 +126,15 @@ export default function Home({ openAuth }) {
           <h1 className="hero-headline">
             Got an <span className="gold">extra ticket?</span><br />Find your rally bro.
           </h1>
-          <div className="hero-tagline-badge" aria-label="Tagline">
-            Free tickets. Real friends. Game day.
+          {/* LED Marquee */}
+          <div className="led-marquee-wrap" aria-label="Tagline">
+            <div className="led-marquee-track">
+              {[0, 1].map(i => (
+                <span key={i} className="led-marquee-text">
+                  FREE TICKETS <span className="led-sep">◆</span> REAL FRIENDS <span className="led-sep">◆</span> GAME DAY <span className="led-sep">◆</span> PORTLAND'S HOME FOR EXTRA TICKETS <span className="led-sep">◆</span> LIST IT. CLAIM IT. RALLY. <span className="led-sep">◆</span>&nbsp;
+                </span>
+              ))}
+            </div>
           </div>
 
           <form className="hero-search" onSubmit={handleSearch} aria-label="Search by zip code">
