@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
@@ -25,10 +25,10 @@ function ListIcon() {
   );
 }
 
-function MessagesIcon() {
+function MyTicketsIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
     </svg>
   );
 }
@@ -36,11 +36,11 @@ function MessagesIcon() {
 export default function BottomNav() {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
-  const [unread, setUnread] = useState(0);
-  const prevUnreadRef = useRef(null); // null = not yet initialised
+  const prevUnreadRef = useRef(null);
 
+  // Keep polling for message notifications even without a Messages tab
   useEffect(() => {
-    if (!user) { setUnread(0); prevUnreadRef.current = null; return; }
+    if (!user) { prevUnreadRef.current = null; return; }
     let active = true;
 
     async function poll() {
@@ -49,20 +49,16 @@ export default function BottomNav() {
         if (res.ok) {
           const data = await res.json();
           const count = data.count;
-          if (active) {
-            setUnread(count);
-            // Fire notification only when count genuinely increases
-            if (prevUnreadRef.current !== null && count > prevUnreadRef.current) {
-              addNotification({
-                type: 'message',
-                title: 'New Message',
-                message: data.ticket_title
-                  ? `New message about ${data.ticket_title}`
-                  : `You have ${count} unread message${count !== 1 ? 's' : ''}`,
-              });
-            }
-            prevUnreadRef.current = count;
+          if (active && prevUnreadRef.current !== null && count > prevUnreadRef.current) {
+            addNotification({
+              type: 'message',
+              title: 'New Message',
+              message: data.ticket_title
+                ? `New message about ${data.ticket_title}`
+                : `You have ${count} unread message${count !== 1 ? 's' : ''}`,
+            });
           }
+          if (active) prevUnreadRef.current = count;
         }
       } catch {}
     }
@@ -94,13 +90,12 @@ export default function BottomNav() {
       </NavLink>
 
       <NavLink
-        to="/messages"
+        to="/my-tickets"
         className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}
-        aria-label={`Messages${unread > 0 ? `, ${unread} unread` : ''}`}
+        aria-label="My tickets"
       >
-        {unread > 0 && <span className="bottom-nav-dot" aria-hidden="true" />}
-        <MessagesIcon />
-        <span>Messages</span>
+        <MyTicketsIcon />
+        <span>My Tickets</span>
       </NavLink>
     </nav>
   );
