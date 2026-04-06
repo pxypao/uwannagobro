@@ -134,8 +134,8 @@ export default function Home({ openAuth }) {
               </div>
               <div className="jumbotron-divider" />
               <div className="jumbotron-stat">
-                <span className="jumbotron-stat-val">FREE</span>
-                <span className="jumbotron-stat-label">Always</span>
+                <span className="jumbotron-stat-val">OR</span>
+                <span className="jumbotron-stat-label">State</span>
               </div>
               <div className="jumbotron-divider" />
               <div className="jumbotron-center">
@@ -144,13 +144,13 @@ export default function Home({ openAuth }) {
               </div>
               <div className="jumbotron-divider" />
               <div className="jumbotron-stat">
-                <span className="jumbotron-stat-val">$0</span>
-                <span className="jumbotron-stat-label">Cost</span>
+                <span className="jumbotron-stat-val">MLS</span>
+                <span className="jumbotron-stat-label">Soccer</span>
               </div>
               <div className="jumbotron-divider" />
               <div className="jumbotron-stat">
-                <span className="jumbotron-stat-val">PDX</span>
-                <span className="jumbotron-stat-label">Fans</span>
+                <span className="jumbotron-stat-val">NBA</span>
+                <span className="jumbotron-stat-label">Basketball</span>
               </div>
             </div>
 
