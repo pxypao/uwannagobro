@@ -158,8 +158,28 @@ export default function Home({ openAuth }) {
 
           <div className="hero-list-link">
             <Link to="/list" className="btn btn-ghost btn-sm" aria-label="List my extra ticket">
-              ＋ List My Ticket
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              List My Ticket
             </Link>
+          </div>
+
+          <div className="hero-trust" aria-label="Trust indicators">
+            <span className="hero-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              100% Free, Always
+            </span>
+            <span className="hero-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Verified Fans Only
+            </span>
+            <span className="hero-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              18+ &amp; ID Verified
+            </span>
+            <span className="hero-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Portland Born
+            </span>
           </div>
         </div>
       </section>

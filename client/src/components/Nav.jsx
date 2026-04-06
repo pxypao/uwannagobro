@@ -8,7 +8,31 @@ function initials(name) {
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
-export default function Nav({ openAuth }) {
+function SunIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  );
+}
+
+export default function Nav({ openAuth, theme, toggleTheme }) {
   const { user, logout, refetch } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,7 +41,6 @@ export default function Nav({ openAuth }) {
   const dropRef = useRef(null);
   const isHome = location.pathname === '/';
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handler(e) {
       if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
@@ -29,14 +52,16 @@ export default function Nav({ openAuth }) {
   return (
     <nav className="nav" aria-label="Main navigation">
       <div className="nav-inner">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           {!isHome && (
             <button
               className="nav-back-btn"
               onClick={() => navigate(-1)}
               aria-label="Go back"
             >
-              ←
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
             </button>
           )}
           <Link to="/" className="nav-logo" aria-label="RallyBro home">
@@ -44,13 +69,20 @@ export default function Nav({ openAuth }) {
           </Link>
         </div>
 
-        {/* Desktop-only nav links */}
         <div className="nav-desktop-links" aria-label="Site links">
           <Link to="/how-it-works" className="nav-text-link">How It Works</Link>
           <Link to="/our-story" className="nav-text-link">Our Story</Link>
         </div>
 
         <div className="nav-right">
+          <button
+            className="nav-theme-btn"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+          </button>
+
           {user ? (
             <>
               <Link to="/my-tickets" className="my-tickets-pill btn">
@@ -74,10 +106,8 @@ export default function Nav({ openAuth }) {
                     aria-label="Profile options"
                   >
                     <div className="profile-dropdown-header">
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <span className="profile-dropdown-name">{user.first_name}</span>
-                      </div>
-                      <div className="profile-dropdown-email" style={{ marginTop: '0.2rem' }}>{user.email}</div>
+                      <div className="profile-dropdown-name">{user.first_name}</div>
+                      <div className="profile-dropdown-email">{user.email}</div>
                     </div>
                     <button
                       className="profile-dropdown-btn"
@@ -88,7 +118,7 @@ export default function Nav({ openAuth }) {
                       Edit Profile
                     </button>
                     <button
-                      className="profile-dropdown-btn"
+                      className="profile-dropdown-btn danger"
                       role="menuitem"
                       onClick={() => { setDropOpen(false); logout(); navigate('/'); }}
                     >
