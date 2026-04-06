@@ -37,9 +37,11 @@ export default function MyTickets() {
     if (!loading && !user) navigate('/');
   }, [loading, user, navigate]);
 
-  const fetchData = useCallback(async () => {
+  const hasLoadedRef = React.useRef(false);
+
+  const fetchData = useCallback(async (showLoader = false) => {
     if (!user) return;
-    setFetching(true);
+    if (showLoader || !hasLoadedRef.current) setFetching(true);
     try {
       const [lRes, cRes, rRes] = await Promise.all([
         apiFetch(`/api/my/tickets`),
@@ -59,6 +61,7 @@ export default function MyTickets() {
           setPendingRating(d.pending[0]); // prompt for the most recent one
         }
       }
+      hasLoadedRef.current = true;
     } finally {
       setFetching(false);
     }
