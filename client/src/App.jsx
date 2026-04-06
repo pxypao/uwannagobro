@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Analytics } from '@vercel/analytics/react';
@@ -18,33 +18,15 @@ import Terms from './pages/Terms';
 import FAQ from './pages/FAQ';
 import ResetPassword from './pages/ResetPassword';
 
-function getInitialTheme() {
-  try {
-    const saved = localStorage.getItem('rb-theme');
-    if (saved === 'dark' || saved === 'light') return saved;
-  } catch {}
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
 export default function App() {
   const [authModal, setAuthModal] = useState(null); // null | 'login' | 'signup'
-  const [theme, setTheme] = useState(getInitialTheme);
   const location = useLocation();
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    try { localStorage.setItem('rb-theme', theme); } catch {}
-  }, [theme]);
-
-  function toggleTheme() {
-    setTheme(t => t === 'dark' ? 'light' : 'dark');
-  }
 
   return (
     <HelmetProvider>
     <DevGate>
     <AuthProvider>
-      <Nav openAuth={setAuthModal} theme={theme} toggleTheme={toggleTheme} />
+      <Nav openAuth={setAuthModal} />
       <div className="page-wrapper">
         <Routes>
           <Route path="/"                element={<Home openAuth={setAuthModal} />} />
