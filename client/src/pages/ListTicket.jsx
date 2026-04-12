@@ -49,6 +49,27 @@ const GAME_DB = [
   { title: 'Portland Pickles vs Medford Rogues', sport: 'Baseball', date: '2026-07-18', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
   { title: 'Portland Pickles vs Walla Walla Sweets', sport: 'Baseball', date: '2026-07-25', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
   { title: 'Portland Pickles vs Port Angeles Lefties', sport: 'Baseball', date: '2026-08-01', time: '18:35', venue: 'Walker Stadium', zip: '97201' },
+
+  // Hillsboro Hops (High-A Baseball) — Ron Tonkin Field
+  { title: 'Hillsboro Hops vs Tri-City Dust Devils', sport: 'Baseball', date: '2026-04-15', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Spokane Indians', sport: 'Baseball', date: '2026-04-22', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Everett AquaSox', sport: 'Baseball', date: '2026-04-29', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Vancouver Canadians', sport: 'Baseball', date: '2026-05-06', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Eugene Emeralds', sport: 'Baseball', date: '2026-05-13', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Tri-City Dust Devils', sport: 'Baseball', date: '2026-05-20', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Spokane Indians', sport: 'Baseball', date: '2026-05-27', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Everett AquaSox', sport: 'Baseball', date: '2026-06-03', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Vancouver Canadians', sport: 'Baseball', date: '2026-06-10', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Eugene Emeralds', sport: 'Baseball', date: '2026-06-17', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Tri-City Dust Devils', sport: 'Baseball', date: '2026-06-24', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Spokane Indians', sport: 'Baseball', date: '2026-07-08', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Everett AquaSox', sport: 'Baseball', date: '2026-07-15', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Vancouver Canadians', sport: 'Baseball', date: '2026-07-22', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Eugene Emeralds', sport: 'Baseball', date: '2026-07-29', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Tri-City Dust Devils', sport: 'Baseball', date: '2026-08-05', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Spokane Indians', sport: 'Baseball', date: '2026-08-12', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Everett AquaSox', sport: 'Baseball', date: '2026-08-19', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
+  { title: 'Hillsboro Hops vs Vancouver Canadians', sport: 'Baseball', date: '2026-08-26', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
 ];
 
 const SEARCH_ALIASES = {
@@ -56,11 +77,14 @@ const SEARCH_ALIASES = {
   'blazers': 'Trail Blazers',
   'trailblazers': 'Trail Blazers',
   'pickles': 'Portland Pickles',
+  'hops': 'Hillsboro Hops',
+  'hillsboro': 'Hillsboro Hops',
   'por': 'Portland',
   'pdx': 'Portland',
   'moda': 'Moda Center',
   'providence': 'Providence Park',
   'walker': 'Walker Stadium',
+  'tonkin': 'Ron Tonkin Field',
 };
 
 function searchGames(query) {
@@ -234,7 +258,7 @@ export default function ListTicket({ openAuth }) {
             onChange={handleTitleChange}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             required
-            placeholder="e.g. Timbers, Blazers, Pickles…"
+            placeholder="e.g. Timbers, Blazers, Hops…"
             autoComplete="off"
             aria-autocomplete="list"
             aria-controls="game-suggestions"
