@@ -93,11 +93,28 @@ export default function Admin() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user || user.email !== ADMIN_EMAIL) { navigate('/'); return; }
+    if (!user) { navigate('/'); return; }
+    if (user.email !== ADMIN_EMAIL) return; // show denied screen
     load();
   }, [user, loading]);
 
-  if (loading || !stats) return (
+  if (loading) return (
+    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
+      Loading…
+    </div>
+  );
+
+  if (!user) return null;
+
+  if (user.email !== ADMIN_EMAIL) return (
+    <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+      <p style={{ color: '#e74c3c', fontSize: 16 }}>Access denied.</p>
+      <p style={{ color: '#555', fontSize: 13 }}>Logged in as: <strong style={{ color: '#aaa' }}>{user.email}</strong></p>
+      <p style={{ color: '#444', fontSize: 12 }}>Admin account: <strong style={{ color: '#aaa' }}>{ADMIN_EMAIL}</strong></p>
+    </div>
+  );
+
+  if (!stats) return (
     <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
       {error || 'Loading…'}
     </div>
