@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import NotificationToast from './components/NotificationToast';
 import DevGate from './components/DevGate';
+import { apiFetch } from './lib/api';
 import Home from './pages/Home';
 import ListTicket from './pages/ListTicket';
 import Messages from './pages/Messages';
@@ -19,6 +20,7 @@ import OurStory from './pages/OurStory';
 import Terms from './pages/Terms';
 import FAQ from './pages/FAQ';
 import ResetPassword from './pages/ResetPassword';
+import Admin from './pages/Admin';
 
 // Polls ticket + claim statuses and fires notifications on changes
 function TicketEventPoller() {
@@ -37,12 +39,8 @@ function TicketEventPoller() {
     async function poll() {
       try {
         const [tRes, cRes] = await Promise.all([
-          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/my/tickets`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          }),
-          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/my/claim`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          }),
+          apiFetch('/api/my/tickets'),
+          apiFetch('/api/my/claim'),
         ]);
 
         // ── Ticket listings: detect claimed + re-opened (canceled by seeker) ──
@@ -128,6 +126,7 @@ function AppInner() {
           <Route path="/terms"           element={<Terms />} />
           <Route path="/faq"             element={<FAQ />} />
           <Route path="/reset-password"  element={<ResetPassword />} />
+          <Route path="/admin"           element={<Admin />} />
         </Routes>
         {location.pathname !== '/messages' && <Footer />}
       </div>
