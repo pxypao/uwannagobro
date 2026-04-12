@@ -39,6 +39,7 @@ export default function AuthModal({ mode, onClose, switchMode }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState('auth'); // 'auth' | 'forgot' | 'forgot-sent'
+  const [showPassword, setShowPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
   const [showGate, setShowGate] = useState(true);
@@ -296,17 +297,34 @@ export default function AuthModal({ mode, onClose, switchMode }) {
                   </button>
                 )}
               </div>
-              <input
-                id="auth-password"
-                className="form-control"
-                type="password"
-                value={form.password}
-                onChange={set('password')}
-                autoComplete={isSignup ? 'new-password' : 'current-password'}
-                required
-                placeholder={isSignup ? 'At least 8 characters' : '••••••••'}
-                minLength={isSignup ? 8 : undefined}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="auth-password"
+                  className="form-control"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={set('password')}
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
+                  required
+                  placeholder={isSignup ? 'At least 8 characters' : '••••••••'}
+                  minLength={isSignup ? 8 : undefined}
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{
+                    position: 'absolute', right: '0.75rem', top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--text-muted)', fontSize: '1.1rem', padding: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             <button
