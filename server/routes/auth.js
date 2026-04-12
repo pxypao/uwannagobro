@@ -48,7 +48,13 @@ router.post('/signup', async (req, res) => {
 
   const user = { id: result.rows[0].id, email: email.toLowerCase().trim(), first_name: first_name.trim() };
   const token = makeToken(user);
-  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  });
+  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
 });
 
 // POST /api/auth/login
@@ -64,12 +70,22 @@ router.post('/login', async (req, res) => {
   if (!match) return res.status(401).json({ error: 'Invalid email or password.' });
 
   const token = makeToken(user);
-  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  });
+  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
 });
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  // Token is stored client-side; nothing to invalidate server-side
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+  });
   res.json({ ok: true });
 });
 

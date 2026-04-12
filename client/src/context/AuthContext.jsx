@@ -8,18 +8,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const fetchMe = useCallback(async () => {
-    if (!localStorage.getItem('token')) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
     try {
       const res = await apiFetch('/api/auth/me');
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
       } else {
-        localStorage.removeItem('token');
         setUser(null);
       }
     } catch {
@@ -31,14 +25,12 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { fetchMe(); }, [fetchMe]);
 
-  const login = (userData, token) => {
-    if (token) localStorage.setItem('token', token);
+  const login = (userData) => {
     setUser(userData);
   };
 
   const logout = async () => {
     await apiFetch('/api/auth/logout', { method: 'POST' });
-    localStorage.removeItem('token');
     setUser(null);
   };
 
