@@ -5,79 +5,13 @@ import { useAuth } from '../context/AuthContext';
 
 const ADMIN_EMAIL = 'jadenmarting@gmail.com';
 
-function StatCard({ label, value, sub, color }) {
-  return (
-    <div style={{
-      background: '#111',
-      border: `1px solid ${color || '#2ecc71'}33`,
-      borderRadius: 12,
-      padding: '20px 24px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 4,
-    }}>
-      <span style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</span>
-      <span style={{ color: color || '#2ecc71', fontSize: 36, fontWeight: 700, lineHeight: 1.1 }}>{value ?? '—'}</span>
-      {sub && <span style={{ color: '#555', fontSize: 12 }}>{sub}</span>}
-    </div>
-  );
-}
-
-function Section({ title, children }) {
-  return (
-    <div style={{ marginTop: 32 }}>
-      <h2 style={{ color: '#aaa', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12, fontWeight: 600 }}>{title}</h2>
-      {children}
-    </div>
-  );
-}
-
-function Table({ cols, rows, render }) {
-  return (
-    <div style={{ overflowX: 'auto', borderRadius: 10, border: '1px solid #222' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-        <thead>
-          <tr style={{ background: '#0c0c0c' }}>
-            {cols.map(c => (
-              <th key={c} style={{ padding: '10px 14px', textAlign: 'left', color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>{c}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 ? (
-            <tr><td colSpan={cols.length} style={{ padding: 20, color: '#444', textAlign: 'center' }}>No data yet</td></tr>
-          ) : rows.map((row, i) => (
-            <tr key={i} style={{ borderTop: '1px solid #1a1a1a', background: i % 2 === 0 ? '#0d0d0d' : 'transparent' }}>
-              {render(row)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function Badge({ status }) {
-  const colors = {
-    open:      { bg: '#0f2a18', color: '#2ecc71' },
-    claimed:   { bg: '#1a1a0a', color: '#f0a500' },
-    cancelled: { bg: '#2a0f0f', color: '#e74c3c' },
-    active:    { bg: '#0f2a18', color: '#2ecc71' },
-  };
-  const c = colors[status] || { bg: '#1a1a1a', color: '#888' };
-  return (
-    <span style={{ background: c.bg, color: c.color, borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>
-      {status}
-    </span>
-  );
-}
-
 export default function Admin() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
   const [refreshed, setRefreshed] = useState(null);
+  const [activeTab, setActiveTab] = useState('listings');
 
   const load = async () => {
     try {
@@ -99,111 +33,226 @@ export default function Admin() {
     if (user && user.email === ADMIN_EMAIL) load();
   }, [user, loading]);
 
-  // Still checking auth
-  if (loading) return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
-      Loading…
-    </div>
-  );
-
-  // Not logged in
-  if (!user) return (
-    <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-      <p style={{ color: '#e74c3c', fontSize: 16 }}>You need to be logged in to view this page.</p>
-    </div>
-  );
-
-  // Logged in but wrong account
+  if (loading) return <Centered>Loading…</Centered>;
+  if (!user) return <Centered>You need to be logged in.</Centered>;
   if (user.email !== ADMIN_EMAIL) return (
-    <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-      <p style={{ color: '#e74c3c', fontSize: 16 }}>Access denied.</p>
-      <p style={{ color: '#555', fontSize: 13 }}>Logged in as: <strong style={{ color: '#aaa' }}>{user.email}</strong></p>
-      <p style={{ color: '#444', fontSize: 12 }}>Expected: <strong style={{ color: '#aaa' }}>{ADMIN_EMAIL}</strong></p>
-    </div>
+    <Centered>
+      <p style={{ color: '#e74c3c', marginBottom: 8 }}>Access denied.</p>
+      <p style={{ color: '#999', fontSize: 13 }}>Logged in as: {user.email}</p>
+    </Centered>
   );
-
-  // Logged in, correct account, waiting for stats
-  if (!stats) return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
-      {error || 'Loading stats…'}
-    </div>
-  );
+  if (error) return <Centered style={{ color: '#e74c3c', fontSize: 13 }}>{error}</Centered>;
+  if (!stats) return <Centered>Loading stats…</Centered>;
 
   const claimRate = stats.tickets.total > 0
-    ? Math.round((stats.tickets.claimed / stats.tickets.total) * 100)
-    : 0;
+    ? Math.round((stats.tickets.claimed / stats.tickets.total) * 100) : 0;
+
+  const tabs = [
+    { key: 'listings', label: 'Listings', count: stats.recentListings.length },
+    { key: 'claims',   label: 'Claims',   count: stats.recentClaims.length },
+    { key: 'sports',   label: 'By Sport',  count: null },
+  ];
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '40px 20px 80px', fontFamily: 'inherit', color: '#fff' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f4f6f9', fontFamily: 'inherit' }}>
 
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
-          <span style={{ color: '#2ecc71' }}>Rally</span>Bro Dashboard
-        </h1>
-        <button
-          onClick={load}
-          style={{ background: '#1a1a1a', border: '1px solid #2ecc7133', color: '#2ecc71', borderRadius: 8, padding: '6px 14px', fontSize: 12, cursor: 'pointer' }}
-        >
-          ↻ Refresh
-        </button>
-      </div>
-      {refreshed && <p style={{ color: '#444', fontSize: 12, marginBottom: 28 }}>Last updated {refreshed}</p>}
+      {/* Sidebar */}
+      <aside style={{
+        width: 220, background: '#fff', borderRight: '1px solid #e8eaed',
+        padding: '32px 0', display: 'flex', flexDirection: 'column', gap: 4,
+        position: 'sticky', top: 0, height: '100vh',
+      }}>
+        <div style={{ padding: '0 24px 24px', borderBottom: '1px solid #f0f0f0' }}>
+          <span style={{ fontWeight: 800, fontSize: 18, color: '#1a1a1a' }}>
+            Rally<span style={{ color: '#27ae60' }}>Bro</span>
+          </span>
+          <div style={{ fontSize: 11, color: '#aaa', marginTop: 2, textTransform: 'uppercase', letterSpacing: 1 }}>Admin</div>
+        </div>
+        <div style={{ padding: '16px 0' }}>
+          {[
+            { label: 'Dashboard', icon: '◈', active: true },
+            { label: 'Listings',  icon: '◉' },
+            { label: 'Claims',    icon: '◎' },
+            { label: 'Users',     icon: '○' },
+          ].map(item => (
+            <div key={item.label} style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '10px 24px', cursor: 'pointer', fontSize: 14,
+              color: item.active ? '#27ae60' : '#666',
+              background: item.active ? '#f0faf4' : 'transparent',
+              borderRight: item.active ? '3px solid #27ae60' : '3px solid transparent',
+              fontWeight: item.active ? 600 : 400,
+            }}>
+              <span style={{ fontSize: 16 }}>{item.icon}</span>
+              {item.label}
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 'auto', padding: '16px 24px', borderTop: '1px solid #f0f0f0' }}>
+          <div style={{ fontSize: 13, color: '#999' }}>Signed in as</div>
+          <div style={{ fontSize: 13, color: '#333', fontWeight: 500, marginTop: 2, wordBreak: 'break-all' }}>{user.first_name}</div>
+        </div>
+      </aside>
 
-      {/* Top stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
-        <StatCard label="Total Users"    value={stats.users.total}    sub={`+${stats.users.thisWeek} this week`} />
-        <StatCard label="Tickets Listed" value={stats.tickets.total}  sub={`${stats.tickets.open} open now`} />
-        <StatCard label="Tickets Claimed" value={stats.tickets.claimed} sub={`${claimRate}% claim rate`} color="#f0a500" />
-        <StatCard label="Active Meets"   value={stats.claims.active}  color="#f0a500" />
-        <StatCard label="Total Chats"    value={stats.messages.total} color="#3498db" />
-        <StatCard label="New Users (30d)" value={stats.users.thisMonth} color="#9b59b6" />
-      </div>
+      {/* Main */}
+      <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>
 
-      {/* Top sports */}
-      {stats.topSports.length > 0 && (
-        <Section title="Tickets by Sport">
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {stats.topSports.map(s => (
-              <div key={s.sport} style={{ background: '#111', border: '1px solid #222', borderRadius: 10, padding: '12px 18px', minWidth: 110, textAlign: 'center' }}>
-                <div style={{ color: '#2ecc71', fontSize: 22, fontWeight: 700 }}>{s.count}</div>
-                <div style={{ color: '#666', fontSize: 12, marginTop: 4 }}>{s.sport}</div>
-              </div>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Dashboard</h1>
+            {refreshed && <p style={{ fontSize: 12, color: '#aaa', margin: '4px 0 0' }}>Last updated {refreshed}</p>}
+          </div>
+          <button onClick={load} style={{
+            background: '#27ae60', color: '#fff', border: 'none',
+            borderRadius: 8, padding: '8px 18px', fontSize: 13,
+            fontWeight: 600, cursor: 'pointer',
+          }}>↻ Refresh</button>
+        </div>
+
+        {/* Stat strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 16, marginBottom: 28 }}>
+          {[
+            { label: 'Total Users',     value: stats.users.total,          sub: `+${stats.users.thisWeek} this week`,  color: '#27ae60' },
+            { label: 'Tickets Listed',  value: stats.tickets.total,         sub: `${stats.tickets.open} open now`,      color: '#2980b9' },
+            { label: 'Tickets Claimed', value: stats.tickets.claimed,       sub: `${claimRate}% claim rate`,            color: '#8e44ad' },
+            { label: 'Active Meets',    value: stats.claims.active,         sub: 'in progress',                         color: '#e67e22' },
+            { label: 'Total Chats',     value: stats.messages.total,        sub: 'messages sent',                       color: '#16a085' },
+            { label: 'New (30 days)',   value: stats.users.thisMonth,       sub: 'new signups',                         color: '#c0392b' },
+          ].map(s => (
+            <div key={s.label} style={{
+              background: '#fff', borderRadius: 12, padding: '20px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #eee',
+            }}>
+              <div style={{ fontSize: 11, color: '#aaa', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{s.label}</div>
+              <div style={{ fontSize: 32, fontWeight: 700, color: s.color, lineHeight: 1 }}>{s.value ?? '—'}</div>
+              <div style={{ fontSize: 11, color: '#bbb', marginTop: 6 }}>{s.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabbed content */}
+        <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #eee' }}>
+
+          {/* Tab bar */}
+          <div style={{ display: 'flex', borderBottom: '1px solid #f0f0f0', padding: '0 24px' }}>
+            {tabs.map(t => (
+              <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
+                background: 'none', border: 'none', padding: '16px 20px 14px', cursor: 'pointer',
+                fontSize: 13, fontWeight: activeTab === t.key ? 700 : 500,
+                color: activeTab === t.key ? '#27ae60' : '#888',
+                borderBottom: activeTab === t.key ? '2px solid #27ae60' : '2px solid transparent',
+                marginBottom: -1, display: 'flex', alignItems: 'center', gap: 6,
+              }}>
+                {t.label}
+                {t.count !== null && (
+                  <span style={{
+                    background: activeTab === t.key ? '#e8f8ef' : '#f4f4f4',
+                    color: activeTab === t.key ? '#27ae60' : '#aaa',
+                    borderRadius: 10, padding: '1px 7px', fontSize: 11, fontWeight: 600,
+                  }}>{t.count}</span>
+                )}
+              </button>
             ))}
           </div>
-        </Section>
-      )}
 
-      {/* Recent listings */}
-      <Section title="Recent Listings">
-        <Table
-          cols={['Title', 'Sport', 'Date', 'Lister', 'Status']}
-          rows={stats.recentListings}
-          render={row => (<>
-            <td style={{ padding: '10px 14px', color: '#ddd', maxWidth: 200 }}>{row.title}</td>
-            <td style={{ padding: '10px 14px', color: '#888' }}>{row.sport}</td>
-            <td style={{ padding: '10px 14px', color: '#888', whiteSpace: 'nowrap' }}>{row.date}</td>
-            <td style={{ padding: '10px 14px', color: '#aaa' }}>{row.lister}</td>
-            <td style={{ padding: '10px 14px' }}><Badge status={row.status} /></td>
-          </>)}
-        />
-      </Section>
+          {/* Tab content */}
+          <div style={{ padding: '8px 0' }}>
+            {activeTab === 'listings' && (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: '#fafafa' }}>
+                    {['Title', 'Sport', 'Date', 'Listed By', 'Status'].map(h => (
+                      <th key={h} style={{ padding: '10px 24px', textAlign: 'left', color: '#aaa', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.recentListings.length === 0 ? (
+                    <tr><td colSpan={5} style={{ padding: 32, textAlign: 'center', color: '#ccc' }}>No listings yet</td></tr>
+                  ) : stats.recentListings.map((row, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid #f6f6f6' }}>
+                      <td style={{ padding: '12px 24px', color: '#333', fontWeight: 500 }}>{row.title}</td>
+                      <td style={{ padding: '12px 24px', color: '#888' }}>{row.sport}</td>
+                      <td style={{ padding: '12px 24px', color: '#888' }}>{row.date}</td>
+                      <td style={{ padding: '12px 24px', color: '#555' }}>{row.lister}</td>
+                      <td style={{ padding: '12px 24px' }}><StatusBadge status={row.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
-      {/* Recent claims */}
-      <Section title="Recent Claims">
-        <Table
-          cols={['Ticket', 'Sport', 'Lister', 'Seeker', 'Status', 'Date']}
-          rows={stats.recentClaims}
-          render={row => (<>
-            <td style={{ padding: '10px 14px', color: '#ddd', maxWidth: 180 }}>{row.title}</td>
-            <td style={{ padding: '10px 14px', color: '#888' }}>{row.sport}</td>
-            <td style={{ padding: '10px 14px', color: '#aaa' }}>{row.lister}</td>
-            <td style={{ padding: '10px 14px', color: '#aaa' }}>{row.seeker}</td>
-            <td style={{ padding: '10px 14px' }}><Badge status={row.status} /></td>
-            <td style={{ padding: '10px 14px', color: '#555', whiteSpace: 'nowrap' }}>{new Date(row.created_at).toLocaleDateString()}</td>
-          </>)}
-        />
-      </Section>
+            {activeTab === 'claims' && (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: '#fafafa' }}>
+                    {['Ticket', 'Sport', 'Lister', 'Seeker', 'Status', 'Date'].map(h => (
+                      <th key={h} style={{ padding: '10px 24px', textAlign: 'left', color: '#aaa', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.recentClaims.length === 0 ? (
+                    <tr><td colSpan={6} style={{ padding: 32, textAlign: 'center', color: '#ccc' }}>No claims yet</td></tr>
+                  ) : stats.recentClaims.map((row, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid #f6f6f6' }}>
+                      <td style={{ padding: '12px 24px', color: '#333', fontWeight: 500 }}>{row.title}</td>
+                      <td style={{ padding: '12px 24px', color: '#888' }}>{row.sport}</td>
+                      <td style={{ padding: '12px 24px', color: '#555' }}>{row.lister}</td>
+                      <td style={{ padding: '12px 24px', color: '#555' }}>{row.seeker}</td>
+                      <td style={{ padding: '12px 24px' }}><StatusBadge status={row.status} /></td>
+                      <td style={{ padding: '12px 24px', color: '#aaa' }}>{new Date(row.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'sports' && (
+              <div style={{ padding: '24px', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                {stats.topSports.length === 0 ? (
+                  <p style={{ color: '#ccc' }}>No data yet</p>
+                ) : stats.topSports.map((s, i) => (
+                  <div key={s.sport} style={{
+                    background: '#f8fdf9', border: '1px solid #d5f0e0',
+                    borderRadius: 12, padding: '20px 28px', textAlign: 'center', minWidth: 120,
+                  }}>
+                    <div style={{ fontSize: 28, fontWeight: 700, color: '#27ae60' }}>{s.count}</div>
+                    <div style={{ fontSize: 13, color: '#555', marginTop: 4 }}>{s.sport}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+      </main>
     </div>
+  );
+}
+
+function Centered({ children, style }) {
+  return (
+    <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const map = {
+    open:      { bg: '#e8f8ef', color: '#27ae60' },
+    claimed:   { bg: '#fef9e7', color: '#e67e22' },
+    cancelled: { bg: '#fdecea', color: '#e74c3c' },
+    active:    { bg: '#e8f8ef', color: '#27ae60' },
+  };
+  const c = map[status] || { bg: '#f4f4f4', color: '#aaa' };
+  return (
+    <span style={{
+      background: c.bg, color: c.color,
+      borderRadius: 6, padding: '3px 10px',
+      fontSize: 11, fontWeight: 700, textTransform: 'capitalize',
+    }}>{status}</span>
   );
 }
