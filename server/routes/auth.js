@@ -48,13 +48,7 @@ router.post('/signup', async (req, res) => {
 
   const user = { id: result.rows[0].id, email: email.toLowerCase().trim(), first_name: first_name.trim() };
   const token = makeToken(user);
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-  });
-  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
+  res.status(201).json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
 });
 
 // POST /api/auth/login
@@ -70,22 +64,11 @@ router.post('/login', async (req, res) => {
   if (!match) return res.status(401).json({ error: 'Invalid email or password.' });
 
   const token = makeToken(user);
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-  });
-  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email } });
+  res.json({ user: { id: user.id, first_name: user.first_name, email: user.email }, token });
 });
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'none',
-  });
   res.json({ ok: true });
 });
 

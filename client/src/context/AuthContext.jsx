@@ -8,12 +8,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const fetchMe = useCallback(async () => {
+    if (!localStorage.getItem('token')) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await apiFetch('/api/auth/me');
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
       } else {
+        localStorage.removeItem('token');
         setUser(null);
       }
     } catch {
@@ -32,8 +38,8 @@ export function AuthProvider({ children }) {
     let timer;
     const reset = () => {
       clearTimeout(timer);
-      timer = setTimeout(async () => {
-        await apiFetch('/api/auth/logout', { method: 'POST' });
+      timer = setTimeout(() => {
+        localStorage.removeItem('token');
         setUser(null);
       }, TIMEOUT);
     };
@@ -46,12 +52,14 @@ export function AuthProvider({ children }) {
     };
   }, [user]);
 
-  const login = (userData) => {
+  const login = (userData, token) => {
+    if (token) localStorage.setItem('token', token);
     setUser(userData);
   };
 
   const logout = async () => {
     await apiFetch('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem('token');
     setUser(null);
   };
 

@@ -87,7 +87,7 @@ export default function AuthModal({ mode, onClose, switchMode }) {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Something went wrong.'); return; }
-      login(data.user);
+      login(data.user, data.token);
       onClose();
     } catch {
       setError('Network error. Please try again.');
