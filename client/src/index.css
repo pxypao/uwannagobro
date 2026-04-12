@@ -885,15 +885,27 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
   line-height: 1.4;
 }
 .ticket-card-note {
+  position: relative;
   font-size: 0.8rem;
   font-style: italic;
-  color: var(--text-muted);
-  margin: 0.3rem 0 0.6rem;
-  padding: 0.45rem 0.7rem;
-  border-left: 3px solid var(--gold);
-  background: var(--gold-light);
-  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  color: #444;
+  margin: 0.4rem 0 0.65rem;
+  padding: 0.5rem 0.75rem;
+  background: #f0f0f0;
+  border-radius: 0 10px 10px 10px;
   line-height: 1.45;
+  display: inline-block;
+  max-width: 100%;
+}
+.ticket-card-note::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid #f0f0f0;
+  border-left: 7px solid transparent;
 }
 .ticket-card-footer {
   display: flex;
