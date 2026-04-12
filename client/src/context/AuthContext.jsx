@@ -25,6 +25,27 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { fetchMe(); }, [fetchMe]);
 
+  // Auto-logout after 10 minutes of inactivity
+  useEffect(() => {
+    if (!user) return;
+    const TIMEOUT = 10 * 60 * 1000;
+    let timer;
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        await apiFetch('/api/auth/logout', { method: 'POST' });
+        setUser(null);
+      }, TIMEOUT);
+    };
+    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+    events.forEach(e => window.addEventListener(e, reset, { passive: true }));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach(e => window.removeEventListener(e, reset));
+    };
+  }, [user]);
+
   const login = (userData) => {
     setUser(userData);
   };
