@@ -82,12 +82,15 @@ export default function Admin() {
   const load = async () => {
     try {
       const res = await apiFetch('/api/admin/stats');
-      if (res.status === 403) { setError('Access denied.'); return; }
-      if (!res.ok) { setError('Failed to load stats.'); return; }
+      if (!res.ok) {
+        const body = await res.text();
+        setError(`Error ${res.status}: ${body}`);
+        return;
+      }
       setStats(await res.json());
       setRefreshed(new Date().toLocaleTimeString());
-    } catch {
-      setError('Network error.');
+    } catch (e) {
+      setError(`Network error: ${e.message}`);
     }
   };
 
