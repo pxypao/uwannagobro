@@ -67,7 +67,8 @@ router.get('/pending-ratings', requireAuth, async (req, res) => {
     JOIN tickets t ON t.id = c.ticket_id
     JOIN users   u ON u.id = t.lister_id
     WHERE c.seeker_id = $1
-      AND (t.date < TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') OR c.status = 'cancelled')
+      AND t.date < TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+      AND c.status != 'cancelled'
       AND NOT EXISTS (
         SELECT 1 FROM ratings r
         WHERE r.claim_id = c.id AND r.rater_id = $2
