@@ -74,6 +74,8 @@ const { router: ratingRoutes } = require('./routes/ratings');
 const usersRoutes    = require('./routes/users');
 const profileRoutes  = require('./routes/profile');
 const adminRoutes    = require('./routes/admin');
+const gamesRoutes    = require('./routes/games');
+const { syncAllTeams } = require('./lib/scheduleSync');
 app.use('/api/auth',     authRoutes);
 app.use('/api/tickets',  ticketRoutes);
 app.use('/api/claims',   claimRoutes);
@@ -83,6 +85,7 @@ app.use('/api/ratings',  ratingRoutes);
 app.use('/api/users',    usersRoutes);
 app.use('/api/profile',  profileRoutes);
 app.use('/api/admin',    adminRoutes);
+app.use('/api/games',    gamesRoutes);
 
 // Health checks — root and /api prefix both work
 app.get('/',            (_req, res) => res.json({ ok: true }));
@@ -200,6 +203,12 @@ async function start() {
     runAutoCancel();
     setInterval(runAutoCancel, 60 * 60 * 1000);
   }, 60 * 1000);
+
+  // Sync schedules on startup, then once every 24 hours
+  setTimeout(() => {
+    syncAllTeams();
+    setInterval(syncAllTeams, 24 * 60 * 60 * 1000);
+  }, 2 * 60 * 1000);
 
   // Keep-alive starts after 1 minute, then every 14 minutes
   setTimeout(() => {

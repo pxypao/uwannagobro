@@ -82,6 +82,19 @@ async function initDb() {
     `DO $$ BEGIN ALTER TABLE tickets ADD COLUMN notes_to_seeker TEXT NOT NULL DEFAULT ''; EXCEPTION WHEN duplicate_column THEN NULL; END $$`,
     `DO $$ BEGIN ALTER TABLE users ADD COLUMN reset_token TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END $$`,
     `DO $$ BEGIN ALTER TABLE users ADD COLUMN reset_token_expires TIMESTAMPTZ; EXCEPTION WHEN duplicate_column THEN NULL; END $$`,
+    `CREATE TABLE IF NOT EXISTS games (
+      id         SERIAL PRIMARY KEY,
+      title      TEXT NOT NULL,
+      sport      TEXT NOT NULL,
+      date       TEXT NOT NULL,
+      time       TEXT NOT NULL,
+      venue      TEXT NOT NULL,
+      zip        TEXT NOT NULL,
+      team       TEXT NOT NULL,
+      source     TEXT NOT NULL DEFAULT 'manual',
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(title, date)
+    )`,
   ];
 
   for (const sql of migrations) {

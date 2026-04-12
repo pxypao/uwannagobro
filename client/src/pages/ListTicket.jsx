@@ -72,43 +72,7 @@ const GAME_DB = [
   { title: 'Hillsboro Hops vs Vancouver Canadians', sport: 'Baseball', date: '2026-08-26', time: '18:35', venue: 'Ron Tonkin Field', zip: '97123' },
 ];
 
-const SEARCH_ALIASES = {
-  'timbers': 'Portland Timbers',
-  'blazers': 'Trail Blazers',
-  'trailblazers': 'Trail Blazers',
-  'pickles': 'Portland Pickles',
-  'hops': 'Hillsboro Hops',
-  'hillsboro': 'Hillsboro Hops',
-  'por': 'Portland',
-  'pdx': 'Portland',
-  'moda': 'Moda Center',
-  'providence': 'Providence Park',
-  'walker': 'Walker Stadium',
-  'tonkin': 'Ron Tonkin Field',
-};
-
-function searchGames(query) {
-  if (!query || query.length < 2) return [];
-  const normalized = query.toLowerCase().trim();
-  // Expand aliases
-  const expanded = Object.keys(SEARCH_ALIASES).reduce((q, alias) => {
-    if (normalized.startsWith(alias) || normalized.includes(alias)) {
-      return SEARCH_ALIASES[alias].toLowerCase();
-    }
-    return q;
-  }, normalized);
-
-  const today = new Date().toISOString().split('T')[0];
-  return GAME_DB.filter(game => {
-    if (game.date < today) return false;
-    return (
-      game.title.toLowerCase().includes(normalized) ||
-      game.title.toLowerCase().includes(expanded) ||
-      game.venue.toLowerCase().includes(normalized) ||
-      game.sport.toLowerCase().includes(normalized)
-    );
-  }).slice(0, 6);
-}
+// Games are now fetched live from /api/games — see useGameSearch hook below
 
 function formatSuggestionDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
@@ -141,18 +105,43 @@ export default function ListTicket({ openAuth }) {
     return (e) => setForm(f => ({ ...f, [k]: e.target.value }));
   }
 
-  function handleTitleChange(e) {
+  async function handleTitleChange(e) {
     const val = e.target.value;
     setForm(f => ({ ...f, title: val }));
     setAutoFilled(false);
     if (val.length >= 2) {
-      const results = searchGames(val);
-      setSuggestions(results);
-      setShowSuggestions(results.length > 0);
+      try {
+        const res = await apiFetch(`/api/games?q=${encodeURIComponent(val)}`);
+        if (res.ok) {
+          const data = await res.json();
+          // Fall back to hardcoded GAME_DB if API returns nothing
+          const results = data.games.length > 0 ? data.games : searchGames(val);
+          setSuggestions(results.slice(0, 6));
+          setShowSuggestions(results.length > 0);
+        }
+      } catch {
+        const results = searchGames(val);
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+      }
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
+  }
+
+  function searchGames(query) {
+    if (!query || query.length < 2) return [];
+    const normalized = query.toLowerCase().trim();
+    const today = new Date().toISOString().split('T')[0];
+    return GAME_DB.filter(game => {
+      if (game.date < today) return false;
+      return (
+        game.title.toLowerCase().includes(normalized) ||
+        game.venue.toLowerCase().includes(normalized) ||
+        game.sport.toLowerCase().includes(normalized)
+      );
+    }).slice(0, 6);
   }
 
   function selectGame(game) {
