@@ -171,7 +171,7 @@ async function runAutoCancel() {
 
 // BUG 2: keep-alive ping every 14 minutes to prevent Render free tier sleeping
 function keepAlive() {
-  https.get('https://rallybro-api.onrender.com/api/tickets', (res) => {
+  https.get('https://uwannagobro.onrender.com/health', (res) => {
     console.log('[keep-alive] ping', res.statusCode);
     res.resume();
   }).on('error', (err) => {
